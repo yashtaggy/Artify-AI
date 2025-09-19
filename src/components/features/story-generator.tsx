@@ -1,10 +1,10 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useEffect, useRef, useState, type FC } from 'react';
+import { useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
-import { useEffect, useRef, useState, type FC } from 'react';
 import { Loader2, Sparkles, Upload } from 'lucide-react';
 import type { StoryGenerationState } from '@/app/actions';
 import { handleGenerateStory } from '@/app/actions';
@@ -47,7 +47,7 @@ function SubmitButton() {
 }
 
 export function StoryGenerator() {
-  const [state, formAction] = useFormState(handleGenerateStory, initialState);
+  const [state, formAction] = useActionState(handleGenerateStory, initialState);
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(PlaceHolderImages[0]?.imageUrl || null);
   const formRef = useRef<HTMLFormElement>(null);

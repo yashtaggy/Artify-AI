@@ -1,9 +1,9 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useEffect, useRef } from 'react';
+import { useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useEffect, useRef } from 'react';
 import { Loader2, TrendingUp, Tag } from 'lucide-react';
 import type { TrendFinderState } from '@/app/actions';
 import { handleSuggestTrends } from '@/app/actions';
@@ -42,7 +42,7 @@ function SubmitButton() {
 }
 
 export function TrendFinder() {
-  const [state, formAction] = useFormState(handleSuggestTrends, initialState);
+  const [state, formAction] = useActionState(handleSuggestTrends, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   
