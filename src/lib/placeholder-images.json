@@ -1,3 +1,10 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "pottery",
+      "description": "A close-up of a potter's hands shaping a clay pot on a wheel.",
+      "imageUrl": "https://picsum.photos/seed/craftgenie/600/400",
+      "imageHint": "clay pot"
+    }
+  ]
 }
