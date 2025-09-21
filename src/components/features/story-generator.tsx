@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { Loader2, Sparkles, Upload } from 'lucide-react';
 import type { StoryGenerationState } from '@/app/actions';
 import { handleGenerateStory } from '@/app/actions';
-import { StoryGeneratorSchema, type StoryGeneratorInput } from '@/lib/schemas';
+import { StoryGeneratorSchema } from '@/lib/schemas';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -49,11 +49,21 @@ function SubmitButton() {
 export function StoryGenerator() {
   const [state, formAction] = useActionState(handleGenerateStory, initialState);
   const { toast } = useToast();
+
+  // image for preview (could be placeholder or data URI)
   const [imagePreview, setImagePreview] = useState<string | null>(PlaceHolderImages[0]?.imageUrl || null);
+
+  // only the Base64 dataURI (actual value we want to send to server)
+  const [imageBase64, setImageBase64] = useState<string | undefined>(undefined);
+
   const formRef = useRef<HTMLFormElement>(null);
-  
-  const form = useForm<StoryGeneratorInput>({
-    resolver: zodResolver(StoryGeneratorSchema),
+
+  // Client-side validation should ignore productPhoto (we validate it server-side).
+  const textOnlySchema = StoryGeneratorSchema.omit({ productPhoto: true });
+
+  // useForm typed as any to avoid type mismatch for omitted schema; safe to keep strict in your project later
+  const form = useForm<any>({
+    resolver: zodResolver(textOnlySchema),
     defaultValues: {
       productName: '',
       productDescription: '',
@@ -71,70 +81,77 @@ export function StoryGenerator() {
       });
     }
   }, [state.error, toast]);
-  
+
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-        setImagePreview(PlaceHolderImages[0]?.imageUrl || null);
+    if (!file) {
+      setImagePreview(PlaceHolderImages[0]?.imageUrl || null);
+      setImageBase64(undefined);
+      // also clear react-hook-form value if you want
+      form.setValue('productPhoto', undefined);
+      return;
     }
-  };
 
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setImagePreview(base64);
+      setImageBase64(base64);
+      // keep react-hook-form state in sync (optional, but useful)
+      form.setValue('productPhoto', base64);
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
       <Card>
         <CardHeader>
           <CardTitle>Create a Product Story</CardTitle>
-          <CardDescription>
-            Fill in your product details. Our AI will craft a compelling story.
-          </CardDescription>
+          <CardDescription>Fill in your product details. Our AI will craft a compelling story.</CardDescription>
         </CardHeader>
+
         <Form {...form}>
-          <form
-            ref={formRef}
-            action={formAction}
-            className="space-y-4"
-          >
+          {/* IMPORTANT: we use a real HTML form so Next server action receives form fields */}
+          <form ref={formRef} action={formAction} className="space-y-4">
+            {/* Hidden input: ensures the Base64 string is submitted as 'productPhoto' */}
+            <input type="hidden" name="productPhoto" value={imageBase64 ?? ''} />
+
             <CardContent className="space-y-4">
               <FormField
                 control={form.control}
                 name="productPhoto"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Product Photo</FormLabel>
                     <FormControl>
-                        <div className="flex flex-col items-center gap-4">
-                            <div className="relative h-48 w-full overflow-hidden rounded-lg border-2 border-dashed border-border transition-colors hover:border-primary">
-                                {imagePreview ? (
-                                <Image src={imagePreview} alt="Product preview" fill className="object-contain" />
-                                ) : (
-                                <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
-                                    <Upload className="mb-2 h-8 w-8" />
-                                    <span>Upload an image</span>
-                                </div>
-                                )}
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="relative h-48 w-full overflow-hidden rounded-lg border-2 border-dashed border-border transition-colors hover:border-primary">
+                          {imagePreview ? (
+                            // Next Image can accept data URI
+                            <Image src={imagePreview} alt="Product preview" fill className="object-contain" />
+                          ) : (
+                            <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
+                              <Upload className="mb-2 h-8 w-8" />
+                              <span>Upload an image</span>
                             </div>
-                            <Input
-                                type="file"
-                                accept="image/*"
-                                className="file:text-primary file:font-semibold"
-                                onChange={(e) => {
-                                    field.onChange(e.target.files);
-                                    onImageChange(e);
-                                }}
-                            />
+                          )}
                         </div>
+
+                        {/* real file input for user - we convert it to Base64 on change */}
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          className="file:text-primary file:font-semibold"
+                          onChange={onImageChange}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="productName"
@@ -142,12 +159,13 @@ export function StoryGenerator() {
                   <FormItem>
                     <FormLabel>Product Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Terracotta Water Jug" {...field} />
+                      <input {...field} className="w-full" placeholder="e.g., Terracotta Water Jug" name="productName" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="productDescription"
@@ -155,12 +173,13 @@ export function StoryGenerator() {
                   <FormItem>
                     <FormLabel>Core Details</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Materials, techniques, region of origin..." {...field} />
+                      <Textarea {...field} placeholder="Materials, techniques, region of origin..." />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="artisanNotes"
@@ -168,88 +187,76 @@ export function StoryGenerator() {
                   <FormItem>
                     <FormLabel>Artisan's Notes (Optional)</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Any personal story or inspiration behind this piece?" {...field} />
+                      <Textarea {...field} placeholder="Any personal story or inspiration behind this piece?" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </CardContent>
+
             <CardFooter>
               <SubmitButton />
             </CardFooter>
           </form>
         </Form>
       </Card>
-      
+
       <div className="space-y-8">
         <AnimateOnResult result={state.result}>
-        {state.result ? (
-            <div className='space-y-8'>
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="font-headline text-2xl">Generated Content</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div>
-                            <h3 className="font-semibold text-lg mb-2 text-primary">Short Description</h3>
-                            <p className="font-body text-foreground/90">{state.result.productDescriptionShort}</p>
-                        </div>
-                        <Separator />
-                         <div>
-                            <h3 className="font-semibold text-lg mb-2 text-primary">Detailed Description</h3>
-                            <p className="font-body text-foreground/90 whitespace-pre-wrap">{state.result.productDescriptionLong}</p>
-                        </div>
-                        <Separator />
-                        <div>
-                            <h3 className="font-semibold text-lg mb-2 text-primary">Social Media Post</h3>
-                            <p className="font-body text-foreground/90 whitespace-pre-wrap">{state.result.socialMediaPost}</p>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <div className='flex flex-col items-center'>
-                    <h2 className='font-headline text-2xl mb-4 text-center'>Digital Provenance Card</h2>
-                    <ProvenanceCard
-                        productName={state.form.productName}
-                        story={state.result.provenanceCardContent}
-                        imageUrl={state.result.productImageUri}
-                    />
-                </div>
-            </div>
-            ) : (
-                <Card className="flex h-full flex-col items-center justify-center border-2 border-dashed">
-                  <div className="text-center text-muted-foreground">
-                    <Sparkles className="mx-auto h-12 w-12" />
-                    <h3 className="mt-4 font-headline text-xl">Your AI-Generated Story</h3>
-                    <p className="mt-2 max-w-xs">The generated product descriptions, social media posts, and provenance card will appear here.</p>
+          {state.result ? (
+            <div className="space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="font-headline text-2xl">Generated Content</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2 text-primary">Short Description</h3>
+                    <p className="font-body text-foreground/90">{state.result.productDescriptionShort}</p>
                   </div>
-                </Card>
-            )}
+                  <Separator />
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2 text-primary">Detailed Description</h3>
+                    <p className="font-body text-foreground/90 whitespace-pre-wrap">{state.result.productDescriptionLong}</p>
+                  </div>
+                  <Separator />
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2 text-primary">Social Media Post</h3>
+                    <p className="font-body text-foreground/90 whitespace-pre-wrap">{state.result.socialMediaPost}</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex flex-col items-center">
+                <h2 className="font-headline text-2xl mb-4 text-center">Digital Provenance Card</h2>
+                <ProvenanceCard
+                  productName={state.form.productName}
+                  story={state.result.provenanceCardContent}
+                  imageUrl={state.result.productImageUri}
+                />
+              </div>
+            </div>
+          ) : (
+            <Card className="flex h-full flex-col items-center justify-center border-2 border-dashed">
+              <div className="text-center text-muted-foreground">
+                <Sparkles className="mx-auto h-12 w-12" />
+                <h3 className="mt-4 font-headline text-xl">Your AI-Generated Story</h3>
+                <p className="mt-2 max-w-xs">The generated product descriptions, social media posts, and provenance card will appear here.</p>
+              </div>
+            </Card>
+          )}
         </AnimateOnResult>
       </div>
     </div>
   );
 }
 
-const AnimateOnResult: FC<{ result: any; children: React.ReactNode }> = ({
-  result,
-  children,
-}) => {
+const AnimateOnResult: FC<{ result: any; children: React.ReactNode }> = ({ result, children }) => {
   const [show, setShow] = useState(false);
   useEffect(() => {
-    if (result) {
-      setShow(true);
-    }
+    if (result) setShow(true);
   }, [result]);
 
-  return (
-    <div
-      className={`transition-opacity duration-1000 ${
-        show ? 'opacity-100' : 'opacity-0'
-      }`}
-    >
-      {children}
-    </div>
-  );
+  return <div className={`transition-opacity duration-1000 ${show ? 'opacity-100' : 'opacity-0'}`}>{children}</div>;
 };

@@ -6,12 +6,6 @@ import { suggestProductTrends, SuggestProductTrendsOutput } from '@/ai/flows/sug
 import { generateAdCreatives, GenerateAdCreativesOutput } from '@/ai/flows/generate-ad-creatives';
 import { AdGeneratorSchema, StoryGeneratorSchema, TrendFinderSchema } from '@/lib/schemas';
 
-// Helper to convert file to data URI
-const fileToDataURI = async (file: File): Promise<string> => {
-    const buffer = Buffer.from(await file.arrayBuffer());
-    return `data:${file.type};base64,${buffer.toString('base64')}`;
-}
-
 export interface StoryGenerationState {
   form: {
     productName: string;
@@ -27,40 +21,37 @@ export async function handleGenerateStory(
   formData: FormData
 ): Promise<StoryGenerationState> {
   try {
-    const rawFormData = Object.fromEntries(formData.entries());
-    const validatedFields = StoryGeneratorSchema.safeParse(rawFormData);
-    
+    const rawFormData = Object.fromEntries(formData.entries()) as Record<string, any>;
+
+    // Validate text fields only
+    const validatedFields = StoryGeneratorSchema.omit({ productPhoto: true }).safeParse(rawFormData);
     if (!validatedFields.success) {
-      return {
-        ...prevState,
-        error: validatedFields.error.flatten().fieldErrors.productPhoto?.[0] || "Validation failed. Please check your inputs.",
-      };
+      return { ...prevState, error: "Validation failed. Please check your inputs." };
     }
 
-    const { productName, productDescription, artisanNotes, productPhoto } = validatedFields.data;
-    const photoFile = productPhoto[0] as File;
-    const productPhotoDataUri = await fileToDataURI(photoFile);
+    const { productName, productDescription, artisanNotes } = validatedFields.data;
+    const productPhotoDataUri = rawFormData.productPhoto as string | undefined;
+
+    if (!productPhotoDataUri) {
+      return { ...prevState, error: "Please upload a valid product photo." };
+    }
 
     const result = await generateProductStory({
       productName,
       productDescription,
       artisanNotes,
-      productPhotoDataUri,
+      productPhotoDataUri, // already Base64 from UI
     });
-    
+
     return {
       form: { productName, productDescription, artisanNotes },
       result: { ...result, productImageUri: productPhotoDataUri },
     };
   } catch (e: any) {
     console.error(e);
-    return {
-      ...prevState,
-      error: e.message || 'An unexpected error occurred.',
-    };
+    return { ...prevState, error: e.message || 'An unexpected error occurred.' };
   }
 }
-
 
 export interface TrendFinderState {
   form: {
@@ -80,72 +71,58 @@ export async function handleSuggestTrends(
     const validatedFields = TrendFinderSchema.safeParse(rawFormData);
 
     if (!validatedFields.success) {
-      return {
-        ...prevState,
-        error: "Validation failed. Please check your inputs.",
-      };
+      return { ...prevState, error: "Validation failed. Please check your inputs." };
     }
-    
-    const { productType, artisanRegion } = validatedFields.data;
 
+    const { productType, artisanRegion } = validatedFields.data;
     const result = await suggestProductTrends({ productType, artisanRegion });
 
-    return {
-      form: { productType, artisanRegion },
-      result,
-    };
+    return { form: { productType, artisanRegion }, result };
   } catch (e: any) {
     console.error(e);
-    return {
-      ...prevState,
-      error: e.message || 'An unexpected error occurred.',
-    };
+    return { ...prevState, error: e.message || 'An unexpected error occurred.' };
   }
 }
 
 export interface AdGeneratorState {
-    form: {
-        productStory: string;
-        artisanPreferences: string;
-    };
-    error?: string;
-    result?: GenerateAdCreativesOutput;
+  form: {
+    productStory: string;
+    artisanPreferences: string;
+  };
+  error?: string;
+  result?: GenerateAdCreativesOutput;
 }
 
 export async function handleGenerateAds(
-    prevState: AdGeneratorState,
-    formData: FormData
+  prevState: AdGeneratorState,
+  formData: FormData
 ): Promise<AdGeneratorState> {
-    try {
-        const rawFormData = Object.fromEntries(formData.entries());
-        const validatedFields = AdGeneratorSchema.safeParse(rawFormData);
-
-        if (!validatedFields.success) {
-            return {
-                ...prevState,
-                error: "Validation failed. Please check your inputs.",
-            };
-        }
-
-        const { productStory, artisanPreferences, productImage } = validatedFields.data;
-        const imageFile = productImage[0] as File;
-        const productImageUri = await fileToDataURI(imageFile);
-
-        const result = await generateAdCreatives({
-            productStory,
-            artisanPreferences,
-            productImageUri,
-        });
-
-        return {
-            form: { productStory, artisanPreferences },
-            result,
-        };
-    } catch (e: any) {
-        console.error(e);
-        return {
-            ...prevState,
-            error: e.message || 'An unexpected error occurred.',
-        };
+  try {
+    // Validate only the text fields with Zod
+    const validatedFields = AdGeneratorSchema.omit({ productImage: true }).safeParse(Object.fromEntries(formData.entries()));
+    if (!validatedFields.success) {
+      console.error(validatedFields.error);
+      return { ...prevState, error: validatedFields.error.issues.map(i => i.message).join(', ') };
     }
+
+    const { productStory, artisanPreferences } = validatedFields.data;
+
+    // Manually get and validate the image data
+    const productImageUri = formData.get('productImage') as string | undefined;
+    if (!productImageUri) {
+      return { ...prevState, error: "Please upload a valid product image." };
+    }
+
+    // Call the flow with the validated data
+    const result = await generateAdCreatives({
+      productStory,
+      artisanPreferences,
+      productImageUri,
+    });
+
+    return { form: { productStory, artisanPreferences }, result };
+  } catch (e: any) {
+    console.error(e);
+    return { ...prevState, error: e.message || 'An unexpected error occurred.' };
+  }
 }
