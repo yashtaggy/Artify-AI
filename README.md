@@ -2,7 +2,7 @@
 
 > **AI-Powered Marketplace Assistant for Local Artisans**
 
-**Artify AI ** is an **AI-driven platform** designed to empower **local artisans** to market their craft, tell their stories, and expand their reach to digital audiences. The platform combines **Google Gemini 2.5 (Flash & Pro)**, **Cohere(command-a-03-2025)**, and **Hugging Face BERT** models to generate creative stories, identify trends, optimize craft pricing, and produce engaging ad creatives.
+**Artify AI** is an **AI-driven platform** designed to empower **local artisans** to market their craft, tell their stories, and expand their reach to digital audiences. The platform combines **Google Gemini 2.5 (Flash & Pro)**, **Cohere(command-a-03-2025)**, and **Hugging Face BERT** models to generate creative stories, identify trends, optimize craft pricing, and produce engaging ad creatives.
 
 ## 🧩 Problem Statement
 
@@ -316,6 +316,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 [Get Started](#installation) • [View Demo](https://craftgenie-demo.vercel.app) • [Report Bug](https://github.com/tanmaykhedekar/craftgenie/issues)
 
-*Built with ❤️ by Yash Tagunde, Tanmay Khedekar and the CraftGenie team*
+*Built with ❤️ by Yash Tagunde, Tanmay Khedekar and the Artify AI team*
 
 </div>
