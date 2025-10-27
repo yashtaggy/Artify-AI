@@ -5,10 +5,10 @@ import { useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
-import { Loader2, Megaphone, Upload, Bot } from 'lucide-react';
-import type { AdGeneratorState } from '@/app/actions';
+import { Loader2, Megaphone, Upload } from 'lucide-react';
+import type { AdGeneratorState, AdGeneratorInput } from '@/app/actions';
 import { handleGenerateAds } from '@/app/actions';
-import { AdGeneratorSchema, type AdGeneratorInput } from '@/lib/schemas';
+import { AdGeneratorSchema } from '@/lib/schemas';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,8 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Separator } from '../ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const initialState: AdGeneratorState = {
   form: {
@@ -46,7 +44,7 @@ function SubmitButton() {
 }
 
 export function AdGenerator() {
-  const [state, formAction] = useActionState(handleGenerateAds, initialState);
+  const [state, formAction] = useActionState<AdGeneratorState, AdGeneratorInput>(handleGenerateAds, initialState);
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(PlaceHolderImages[0]?.imageUrl || null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -56,7 +54,7 @@ export function AdGenerator() {
     defaultValues: {
       productStory: '',
       artisanPreferences: '',
-      productImage: '', // Change undefined to an empty string to match the schema
+      productImage: '',
     },
   });
 
@@ -82,7 +80,7 @@ export function AdGenerator() {
       reader.readAsDataURL(file);
     } else {
       setImagePreview(PlaceHolderImages[0]?.imageUrl || null);
-      form.setValue('productImage', ''); // Set to empty string
+      form.setValue('productImage', '');
     }
   };
 
@@ -99,7 +97,7 @@ export function AdGenerator() {
           <form ref={formRef} action={formAction} className="space-y-4">
             <CardContent className="space-y-4">
               <input type="hidden" name="productImage" value={form.getValues('productImage') || ''} />
-              
+
               <FormItem>
                 <FormLabel>Product Image</FormLabel>
                 <div className="flex flex-col items-center gap-4">
@@ -155,8 +153,50 @@ export function AdGenerator() {
           </form>
         </Form>
       </Card>
-      
-      {/* ... rest of the component ... */}
+
+      {/* Render generated ad creatives */}
+      {state.result && (
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Generated Ads</CardTitle>
+              <CardDescription>Your ad creatives are ready!</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Card className="bg-muted p-4">
+                <CardHeader>
+                  <CardTitle>YouTube Short</CardTitle>
+                </CardHeader>
+                <CardContent>{state.result.youtubeShort}</CardContent>
+              </Card>
+              <Card className="bg-muted p-4">
+                <CardHeader>
+                  <CardTitle>Instagram Reel</CardTitle>
+                </CardHeader>
+                <CardContent>{state.result.instagramReel}</CardContent>
+              </Card>
+              <Card className="bg-muted p-4">
+                <CardHeader>
+                  <CardTitle>Google Ad Banner</CardTitle>
+                </CardHeader>
+                <CardContent>{state.result.googleAdBanner}</CardContent>
+              </Card>
+              <Card className="bg-muted p-4">
+                <CardHeader>
+                  <CardTitle>Audience Targeting</CardTitle>
+                </CardHeader>
+                <CardContent>{state.result.audienceTargeting}</CardContent>
+              </Card>
+              <Card className="bg-muted p-4">
+                <CardHeader>
+                  <CardTitle>Budget Optimization</CardTitle>
+                </CardHeader>
+                <CardContent>{state.result.budgetOptimization}</CardContent>
+              </Card>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

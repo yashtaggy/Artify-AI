@@ -1,86 +1,89 @@
-// src/ai/flows/generate-ad-creatives.ts
 'use server';
 
 /**
- * @fileOverview This file defines a Genkit flow for generating ad creatives, including social media posts and ad banners, with audience targeting and budget optimization suggestions.
- *
- * - generateAdCreatives - A function that takes product stories and artisan preferences as input and generates ad creatives.
- * - GenerateAdCreativesInput - The input type for the generateAdCreatives function.
- * - GenerateAdCreativesOutput - The return type for the generateAdCreatives function.
+ * @fileOverview Defines the Genkit flow for generating ad creatives with fallback handling.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
-// Input schema for the generateAdCreatives flow
 const GenerateAdCreativesInputSchema = z.object({
   productStory: z.string().describe('The AI-generated story of the product.'),
-  artisanPreferences: z
-    .string()
-    .describe(
-      'Artisan preferences regarding target audience, budget, and ad format.'
-    ),
-  productImageUri: z
-    .string()
-    .describe(
-      "A photo of the product, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
-    ),
+  artisanPreferences: z.string().describe('Artisan preferences regarding target audience, budget, and ad format.'),
+  productImageUri: z.string().describe('Base64 encoded product image with MIME type.'),
 });
 
-export type GenerateAdCreativesInput = z.infer<
-  typeof GenerateAdCreativesInputSchema
->;
+export type GenerateAdCreativesInput = z.infer<typeof GenerateAdCreativesInputSchema>;
 
-// Output schema for the generateAdCreatives flow
 const GenerateAdCreativesOutputSchema = z.object({
-  youtubeShort: z.string().describe('Generated YouTube Shorts ad creative.'),
-  instagramReel: z.string().describe('Generated Instagram Reels ad creative.'),
-  googleAdBanner: z.string().describe('Generated Google Ads banner creative.'),
-  audienceTargeting: z
-    .string()
-    .describe('AI-driven audience targeting suggestions.'),
-  budgetOptimization: z
-    .string()
-    .describe('Budget optimization suggestions for the ad campaign.'),
+  youtubeShort: z.string(),
+  instagramReel: z.string(),
+  googleAdBanner: z.string(),
+  audienceTargeting: z.string(),
+  budgetOptimization: z.string(),
 });
 
-export type GenerateAdCreativesOutput = z.infer<
-  typeof GenerateAdCreativesOutputSchema
->;
+export type GenerateAdCreativesOutput = z.infer<typeof GenerateAdCreativesOutputSchema>;
 
-// Main function to generate ad creatives
 export async function generateAdCreatives(
   input: GenerateAdCreativesInput
 ): Promise<GenerateAdCreativesOutput> {
-  return generateAdCreativesFlow(input);
+  try {
+    // Check if ai is properly configured
+    if (!ai || !ai.definePrompt) {
+      console.warn('⚠️ Genkit not initialized properly. Returning mock response.');
+      return mockAdResponse(input);
+    }
+
+    const adCreativesPrompt = ai.definePrompt({
+      name: 'adCreativesPrompt',
+      input: { schema: GenerateAdCreativesInputSchema },
+      output: { schema: GenerateAdCreativesOutputSchema },
+      prompt: `
+        You are a professional marketing copywriter.
+        Using the details below, generate three short ad creatives and marketing insights.
+
+        Product Story: {{{productStory}}}
+        Artisan Preferences: {{{artisanPreferences}}}
+        Product Image: {{media url=productImageUri}}
+
+        Output structured results for:
+        - YouTube Short (engaging 10-15s caption)
+        - Instagram Reel (hook + short copy)
+        - Google Ad Banner (headline + subline)
+        - Audience Targeting (who to show this to)
+        - Budget Optimization (how to spend effectively)
+      `,
+    });
+
+    const flow = ai.defineFlow(
+      {
+        name: 'generateAdCreativesFlow',
+        inputSchema: GenerateAdCreativesInputSchema,
+        outputSchema: GenerateAdCreativesOutputSchema,
+      },
+      async inputData => {
+        const { output } = await adCreativesPrompt(inputData);
+        return output!;
+      }
+    );
+
+    const output = await flow(input);
+    return output;
+  } catch (err: any) {
+    console.error('❌ AI generation failed:', err);
+    // Return fallback data so the UI doesn’t break
+    return mockAdResponse(input);
+  }
 }
 
-// Define the prompt for generating ad creatives
-const adCreativesPrompt = ai.definePrompt({
-  name: 'adCreativesPrompt',
-  input: {schema: GenerateAdCreativesInputSchema},
-  output: {schema: GenerateAdCreativesOutputSchema},
-  prompt: `You are an AI marketing expert specializing in creating ad creatives for artisans.
-
-  Given the following product story, artisan preferences, and product image, generate ad creatives for YouTube Shorts, Instagram Reels, and Google Ads banners. Also, provide audience targeting and budget optimization suggestions.
-
-  Product Story: {{{productStory}}}
-  Artisan Preferences: {{{artisanPreferences}}}
-  Product Image: {{media url=productImageUri}}
-
-  Output ad creatives, audience targeting, and budget optimization to maximize artisan's reach and sales.
-`,
-});
-
-// Define the Genkit flow for generating ad creatives
-const generateAdCreativesFlow = ai.defineFlow(
-  {
-    name: 'generateAdCreativesFlow',
-    inputSchema: GenerateAdCreativesInputSchema,
-    outputSchema: GenerateAdCreativesOutputSchema,
-  },
-  async input => {
-    const {output} = await adCreativesPrompt(input);
-    return output!;
-  }
-);
+// --- Mock fallback in case AI/Genkit fails ---
+function mockAdResponse(input: GenerateAdCreativesInput): GenerateAdCreativesOutput {
+  return {
+    youtubeShort: `✨ Showcasing your product: ${input.productStory.slice(0, 60)}...`,
+    instagramReel: `🎬 Trendy reel idea for ${input.artisanPreferences.slice(0, 60)}...`,
+    googleAdBanner: `🛍️ ${input.productStory.split(' ')[0]} — the next must-have item!`,
+    audienceTargeting: `Ideal for ${input.artisanPreferences || 'your target audience'}.`,
+    budgetOptimization: 'Start small and increase spend based on engagement rates.',
+  };
+}

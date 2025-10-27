@@ -1,6 +1,6 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { db, auth } from "./firebase";
-import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const provider = new GoogleAuthProvider();
 
@@ -14,10 +14,8 @@ export const signInWithGoogle = async () => {
     const uid = user.uid;
     const photoURL = user.photoURL || "";
 
-    const usersRef = collection(db, "users");
-
-    const q = query(usersRef, where("email", "==", email));
-    const querySnapshot = await getDocs(q);
+    const userDocRef = doc(db, "users", uid); // Use UID as doc ID
+    const docSnap = await getDoc(userDocRef);
 
     let userData: any = {
       name,
@@ -35,28 +33,28 @@ export const signInWithGoogle = async () => {
       completedProfile: false,
     };
 
-    if (!querySnapshot.empty) {
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        userData = {
-          id: doc.id,
-          ...userData,
-          bio: data.bio || "",
-          category: data.category || "",
-          portfolioURL: data.portfolioURL || "",
-          studioLocation: data.studioLocation || "",
-          yearsOfPractice: data.yearsOfPractice || "",
-          achievements: data.achievements || "",
-          socialLinks: data.socialLinks || "",
-          completedProfile: data.completedProfile ?? false,
-          photoURL: data.photoURL || photoURL,
-        };
-      });
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      userData = {
+        id: uid,
+        ...userData,
+        bio: data.bio || "",
+        category: data.category || "",
+        portfolioURL: data.portfolioURL || "",
+        studioLocation: data.studioLocation || "",
+        yearsOfPractice: data.yearsOfPractice || "",
+        achievements: data.achievements || "",
+        socialLinks: data.socialLinks || "",
+        completedProfile: data.completedProfile ?? false,
+        photoURL: data.photoURL || photoURL,
+      };
     } else {
-      const docRef = await addDoc(usersRef, userData);
-      userData.id = docRef.id;
+      // Save new user using UID as doc ID
+      await setDoc(userDocRef, userData);
+      userData.id = uid;
     }
 
+    // Save locally
     localStorage.setItem("currentUser", JSON.stringify(userData));
 
     return { success: true, user: userData };

@@ -2,54 +2,96 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 
+ * Fonts are handled via next/font/google in layout.tsx.
+ * Fallback applied here for safety.
+ */
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Nanum Pen Script', cursive;
 }
 
 @layer base {
+  /* 🌞 LIGHT THEME — "SCRIBE'S ILLUMINATION" (Bright & Elegant) */
   :root {
-    --background: 44 52% 92%;
-    --foreground: 25 25% 15%;
-    --card: 44 52% 96%;
-    --card-foreground: 25 25% 15%;
-    --popover: 44 52% 96%;
-    --popover-foreground: 25 25% 15%;
-    --primary: 14 70% 62%;
-    --primary-foreground: 14 70% 98%;
-    --secondary: 14 50% 88%;
-    --secondary-foreground: 14 70% 25%;
-    --muted: 14 40% 94%;
-    --muted-foreground: 14 20% 55%;
-    --accent: 284 25% 67%;
-    --accent-foreground: 284 25% 10%;
+    /* Base Colors */
+    --background: 30 100% 98%;      /* Warm White */
+    --foreground: 240 10% 3%;       /* Deep Charcoal */
+
+    /* Surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3%;
+
+    /* Primary (CTA) */
+    --primary: 260 100% 60%;        /* Electric Violet */
+    --primary-foreground: 0 0% 100%;/* White on Violet */
+
+    /* Secondary (Subtle Buttons) */
+    --secondary: 0 100% 68%;        /* Neon Coral */
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted / Subtle Elements */
+    --muted: 45 60% 90%;
+    --muted-foreground: 45 10% 50%;
+
+    /* Accent */
+    --accent: 45 100% 65%;          /* Neon Yellow */
+    --accent-foreground: 240 10% 3%;
+
+    /* Alerts / Destructive */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 14 30% 83%;
-    --input: 14 30% 88%;
-    --ring: 14 70% 62%;
-    --radius: 0.5rem;
+
+    /* Borders / Inputs */
+    --border: 45 40% 80%;
+    --input: 45 60% 90%;
+    --ring: 260 100% 60%; 
+    --radius: 0.75rem;              /* Soft Rounded Corners */
+
+    /* Gradients */
+    --gradient-start: 260 100% 60%; /* Electric Violet */
+    --gradient-end: 45 100% 65%;    /* Neon Yellow */
+    --gradient-accent-start: 0 100% 68%;  /* Neon Coral */
+    --gradient-accent-end: 300 100% 50%;  /* Magenta */
   }
 
+  /* 🌚 DARK THEME — "SCRIBE'S ILLUMINATION" (Deep & Luminous) */
   .dark {
-    --background: 25 15% 10%;
-    --foreground: 44 30% 85%;
-    --card: 25 15% 15%;
-    --card-foreground: 44 30% 85%;
-    --popover: 25 15% 15%;
-    --popover-foreground: 44 30% 85%;
-    --primary: 14 70% 62%;
-    --primary-foreground: 14 70% 98%;
-    --secondary: 14 50% 20%;
-    --secondary-foreground: 14 50% 90%;
-    --muted: 14 20% 25%;
-    --muted-foreground: 14 20% 65%;
-    --accent: 284 25% 67%;
-    --accent-foreground: 284 25% 98%;
+    /* Base Colors */
+    --background: 240 20% 8%;       /* Deep Lapis Blue */
+    --foreground: 0 0% 95%;         /* Off-White */
+
+    /* Surfaces */
+    --card: 240 15% 15%;
+    --card-foreground: 0 0% 95%;
+    --popover: 240 15% 15%;
+    --popover-foreground: 0 0% 95%;
+
+    /* Primary */
+    --primary: 260 90% 75%;         /* Bright Violet */
+    --primary-foreground: 240 20% 8%;
+
+    /* Secondary */
+    --secondary: 120 80% 60%;       /* Hyper Green */
+    --secondary-foreground: 240 20% 8%;
+
+    /* Muted */
+    --muted: 240 15% 25%;
+    --muted-foreground: 240 10% 60%;
+
+    /* Accent */
+    --accent: 0 100% 68%;           /* Neon Coral */
+    --accent-foreground: 0 0% 95%;
+
+    /* Alerts / Destructive */
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 14 20% 30%;
-    --input: 14 20% 35%;
-    --ring: 14 70% 62%;
+
+    /* Borders / Inputs */
+    --border: 240 15% 30%;
+    --input: 240 15% 35%;
+    --ring: 260 90% 75%;
   }
 }
 
@@ -60,4 +102,17 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* 🧩 Custom Styling — Form Elements */
+select {
+  @apply bg-card text-foreground border border-border rounded-xl px-3 py-2 shadow-md 
+         outline-none focus:ring-2 focus:ring-primary transition-all duration-300;
+  appearance: none;
+  background-image: none;
+  cursor: pointer;
+}
+
+select option {
+  @apply bg-card text-foreground;
 }
