@@ -1,25 +1,8 @@
-# 🎨 Artify AI — CraftGenie
+# 🎨 Artify AI 
 
 > **AI-Powered Marketplace Assistant for Local Artisans**
 
-CraftGenie is an **AI-driven platform** designed to empower **local artisans** to market their craft, tell their stories, and expand their reach to digital audiences. The platform combines **Google Gemini 2.5 (Flash & Pro)**, **Cohere Command-R**, and **Hugging Face BERT** models to generate creative stories, identify trends, optimize craft pricing, and produce engaging ad creatives.
-
-![Version](https://img.shields.io/badge/version-2.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Status](https://img.shields.io/badge/status-active-success)
-
-## 📋 Table of Contents
-- [Problem Statement](#-problem-statement)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
-- [Usage](#-usage)
-- [API Documentation](#-api-documentation)
-- [Deployment](#-deployment)
-- [Contributing](#-contributing)
-- [Team](#-team)
-- [License](#-license)
+**Artify AI ** is an **AI-driven platform** designed to empower **local artisans** to market their craft, tell their stories, and expand their reach to digital audiences. The platform combines **Google Gemini 2.5 (Flash & Pro)**, **Cohere(command-a-03-2025)**, and **Hugging Face BERT** models to generate creative stories, identify trends, optimize craft pricing, and produce engaging ad creatives.
 
 ## 🧩 Problem Statement
 
@@ -290,13 +273,13 @@ git push origin feature/amazing-feature
 - 🎓 Final-year B.Tech — Computer Science & Engineering
 - 📍 Pune, India
 - 💡 Full Stack Developer | Project Management
-- 🔗 [LinkedIn](https://linkedin.com/in/yashtagunde) • [GitHub](https://github.com/yashtagunde)
+- 🔗 [LinkedIn](https://www.linkedin.com/in/yash-t-a4330b1b5/) • [GitHub](https://github.com/yashtaggy)
 
 #### **Tanmay Khedekar** - Lead Developer
 - 🎓 Final-year B.Tech — Computer Science & Engineering
 - 📍 Pune, India
 - 💡 AI & ML Enthusiast | Full Stack Developer
-- 🔗 [LinkedIn](https://linkedin.com/in/tanmaykhedekar) • [GitHub](https://github.com/tanmaykhedekar)
+- 🔗 [LinkedIn](https://www.linkedin.com/in/tanmay-khedekar-b66b43226/) • [GitHub](https://github.com/TanmayKhedekar)
 
 ### Contributors
 We welcome contributions from the open-source community! Special thanks to all our contributors.
@@ -308,7 +291,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🆘 Support
 
 - 📧 Email: contact.craftgenie@gmail.com
-- 🐛 [Issue Tracker](https://github.com/tanmaykhedekar/craftgenie/issues)
+- 🐛 [Issue Tracker](https://github.com/yashtaggy/Artify-AI.git)
 - 📖 [Documentation Wiki](https://github.com/tanmaykhedekar/craftgenie/wiki)
 
 ## 🗺 Roadmap
