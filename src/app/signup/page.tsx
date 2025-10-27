@@ -10,7 +10,7 @@ import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import ArtifyLogo from "@/components/ArtifyLogo";
 import WaveBackground from "@/components/WaveBackground";
-import { signInWithGoogle } from "@/lib/firebaseAuth";
+import { signInWithGoogle, signUpWithEmail } from "@/lib/firebaseAuth";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -20,10 +20,40 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // ✅ Email validation regex
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  };
+
+  // ✅ Common function to send welcome email
+  const sendWelcomeEmail = async (email: string, name: string) => {
+    try {
+      if (!email || !name) return;
+      await fetch("/api/send-welcome", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name }),
+      });
+    } catch (err) {
+      console.error("Welcome email failed:", err);
+    }
+  };
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
+    // ✅ Validate email
+    if (!isValidEmail(email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address (e.g., user@example.com).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
     try {
       const usersRef = collection(db, "users");
       const q = query(usersRef, where("email", "==", email));
@@ -32,40 +62,52 @@ export default function SignupPage() {
       if (!querySnapshot.empty) {
         toast({
           title: "Signup Failed",
-          description: "Email already registered",
+          description: "Email already registered.",
           variant: "destructive",
         });
         return;
       }
 
-      // Create user with default profile fields
-      const newUserData = {
-        name,
-        email,
-        password,
-        bio: "",
-        category: "",
-        portfolioURL: "",
-        studioLocation: "",
-        yearsOfPractice: "",
-        achievements: "",
-        socialLinks: "",
-        photoURL: "",
-        completedProfile: false,
-        createdAt: new Date(),
-      };
-
-      const docRef = await addDoc(usersRef, newUserData);
-
-      // Save full user in localStorage
-      localStorage.setItem(
-        "currentUser",
-        JSON.stringify({ ...newUserData, id: docRef.id })
-      );
+      // ✅ Create user in Firestore
+      setLoading(true);
+        try {
+          const res = await signUpWithEmail(name, email, password);
+        
+          if (res.success && res.user) {
+            localStorage.setItem("currentUser", JSON.stringify(res.user));
+          
+            // ✅ Send Welcome Email
+            await sendWelcomeEmail(email, name);
+          
+            toast({
+              title: "Account Created",
+              description: "Welcome email sent! Please complete your profile setup.",
+            });
+          
+            router.push("/profile/setup");
+          } else {
+            toast({
+              title: "Signup Failed",
+              description: "Email already registered or invalid password.",
+              variant: "destructive",
+            });
+          }
+        } catch (err) {
+          console.error(err);
+          toast({
+            title: "Signup Failed",
+            description: "Something went wrong.",
+            variant: "destructive",
+          });
+        } finally {
+          setLoading(false);
+        }
+      // ✅ Send Welcome Email
+      await sendWelcomeEmail(email, name);
 
       toast({
         title: "Account Created",
-        description: "Please complete your profile setup.",
+        description: "Welcome email sent! Please complete your profile setup.",
       });
 
       router.push("/profile/setup");
@@ -73,7 +115,7 @@ export default function SignupPage() {
       console.error(err);
       toast({
         title: "Signup Failed",
-        description: "Something went wrong",
+        description: "Something went wrong.",
         variant: "destructive",
       });
     } finally {
@@ -85,8 +127,12 @@ export default function SignupPage() {
     setLoading(true);
     try {
       const res = await signInWithGoogle();
+
       if (res.success && res.user) {
         localStorage.setItem("currentUser", JSON.stringify(res.user));
+
+        // ✅ Send Welcome Email for Google signup as well
+        await sendWelcomeEmail(res.user.email, res.user.name);
 
         toast({
           title: "Account Created",
@@ -97,7 +143,7 @@ export default function SignupPage() {
       } else {
         toast({
           title: "Signup Failed",
-          description: "Google sign-up failed",
+          description: "Google sign-up failed.",
           variant: "destructive",
         });
       }
@@ -105,7 +151,7 @@ export default function SignupPage() {
       console.error(err);
       toast({
         title: "Signup Failed",
-        description: "Something went wrong",
+        description: "Something went wrong.",
         variant: "destructive",
       });
     } finally {

@@ -1,9 +1,15 @@
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  createUserWithEmailAndPassword, // New import for manual sign-up
+  updateProfile // Import to set display name
+} from "firebase/auth";
 import { db, auth } from "./firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const provider = new GoogleAuthProvider();
 
+// --- GOOGLE SIGN IN (Existing Function) ---
 export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
@@ -54,12 +60,66 @@ export const signInWithGoogle = async () => {
       userData.id = uid;
     }
 
-    // Save locally
+    // Save locally (Note: Firestore is recommended over localStorage for persistence)
     localStorage.setItem("currentUser", JSON.stringify(userData));
 
     return { success: true, user: userData };
   } catch (error) {
     console.error("Google Sign-In Error:", error);
+    return { success: false, error };
+  }
+};
+
+
+// --- EMAIL/PASSWORD SIGN UP (New Function to Fix the Issue) ---
+
+/**
+ * Handles user sign-up using email and password, creating the Firebase Auth record
+ * which then triggers the Cloud Function for the welcome email.
+ * It also initializes the user's Firestore profile data.
+ * * @param name The user's desired display name.
+ * @param email The user's email address.
+ * @param password The user's password.
+ */
+export const signUpWithEmail = async (name: string, email: string, password: string) => {
+  try {
+    // 1. CREATE USER: This is the critical step that triggers the Cloud Function
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // 2. UPDATE PROFILE: Set the display name (optional but good practice)
+    await updateProfile(user, { displayName: name });
+
+    const uid = user.uid;
+    const userDocRef = doc(db, "users", uid); 
+
+    let userData: any = {
+      name,
+      email,
+      uid,
+      photoURL: "", // Manual sign-up users don't have a photoURL by default
+      bio: "",
+      category: "",
+      portfolioURL: "",
+      studioLocation: "",
+      yearsOfPractice: "",
+      achievements: "",
+      socialLinks: "",
+      createdAt: new Date(),
+      completedProfile: false,
+    };
+
+    // 3. INITIALIZE FIRESTORE PROFILE: Save new user using UID as doc ID
+    await setDoc(userDocRef, userData);
+    userData.id = uid;
+
+    // Save locally
+    localStorage.setItem("currentUser", JSON.stringify(userData));
+
+    return { success: true, user: userData };
+  } catch (error) {
+    // Log detailed error messages for common issues (e.g., weak-password)
+    console.error("Email/Password Sign-Up Error:", error);
     return { success: false, error };
   }
 };

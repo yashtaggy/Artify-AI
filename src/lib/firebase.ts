@@ -5,7 +5,6 @@ import { getStorage } from "firebase/storage";
 import {
   getAuth,
   signInWithCustomToken,
-  signInAnonymously,
   setPersistence,
   browserSessionPersistence,
 } from "firebase/auth";
@@ -22,7 +21,6 @@ const firebaseConfig = {
 };
 
 // --- OPTIONAL: Token injection if used by your platform ---
-// Read from globalThis in a safe way so TypeScript won't complain if the variable doesn't exist.
 const initialAuthToken = (globalThis as any)?.__initial_auth_token ?? null;
 
 // --- Initialize Firebase only once ---
@@ -40,13 +38,11 @@ const initialAuth = (async () => {
     await setPersistence(auth, browserSessionPersistence);
 
     if (initialAuthToken) {
-      // If your app provides secure tokens at runtime, use them here
+      // Use secure custom token if available
       await signInWithCustomToken(auth, initialAuthToken);
       console.log("Firebase: Signed in successfully with custom token.");
     } else {
-      // Otherwise, sign in anonymously to establish context
-      await signInAnonymously(auth);
-      console.log("Firebase: Signed in anonymously.");
+      console.log("Firebase: No custom token available — user will sign in manually.");
     }
   } catch (error) {
     console.error("Firebase Auth init failed:", error);
