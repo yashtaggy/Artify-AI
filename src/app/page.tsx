@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StoryGenerator } from "@/components/features/story-generator";
 import { TrendFinder } from "@/components/features/trend-finder";
 import { AdGenerator } from "@/components/features/ad-generator";
+import { MarketDemand } from "@/components/features/market-demand";
+import { BarChart3 } from "lucide-react";
 import { CraftScore } from "@/components/features/craft-score";
 import {
   Sparkles,
@@ -14,7 +16,6 @@ import {
   Megaphone,
   BookOpen,
   X,
-  Palette,
   PenTool,
 } from "lucide-react";
 import { db } from "@/lib/firebase";
@@ -28,6 +29,9 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
+
+// 👇 Add this import
+import AppTour from "@/components/onboarding/AppTour";
 
 export default function Home() {
   const router = useRouter();
@@ -83,20 +87,27 @@ export default function Home() {
 
       <main className="flex-1 p-4 md:p-8">
         <Tabs defaultValue="story-generator" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-5 mx-auto mb-6 max-w-5xl">
-            <TabsTrigger value="story-generator">
+          <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-6 mx-auto mb-6 max-w-5xl">
+
+            <TabsTrigger
+              value="story-generator"
+              data-tour-id="story-generator"
+            >
               <Sparkles className="mr-2" /> Story Generator
             </TabsTrigger>
-            <TabsTrigger value="trend-finder">
+            <TabsTrigger value="trend-finder" data-tour-id="trends-finder">
               <TrendingUp className="mr-2" /> Trend Finder
             </TabsTrigger>
-            <TabsTrigger value="craft-score">
+            <TabsTrigger value="craft-score" data-tour-id="craft-score">
               <Megaphone className="mr-2" /> Craft Score
             </TabsTrigger>
-            <TabsTrigger value="ad-generator">
+            <TabsTrigger value="market-demand" data-tour-id="market-demand">
+              <BarChart3 className="mr-2" /> Market Demand
+            </TabsTrigger>
+            <TabsTrigger value="ad-generator" data-tour-id="ad-creatives">
               <PenTool className="mr-2" /> Ad-Creatives
             </TabsTrigger>
-            <TabsTrigger value="my-library">
+            <TabsTrigger value="my-library" data-tour-id="library">
               <BookOpen className="mr-2" /> My Library
             </TabsTrigger>
           </TabsList>
@@ -114,6 +125,11 @@ export default function Home() {
           {/* Craft Score */}
           <TabsContent value="craft-score" className="space-y-4">
             <CraftScore />
+          </TabsContent>
+
+          {/* Market Demand */}
+          <TabsContent value="market-demand" className="space-y-4">
+            <MarketDemand />
           </TabsContent>
 
           {/* Ad-Creatives */}
@@ -202,6 +218,9 @@ export default function Home() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* 👇 Add the App Tour here */}
+      <AppTour />
     </div>
   );
 }

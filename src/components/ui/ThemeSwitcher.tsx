@@ -30,12 +30,11 @@ export function ThemeSwitcher() {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 px-2 bg-card/50 rounded-xl">
-      <label htmlFor="theme-selector" className="text-lg font-sans text-foreground mb-2 sm:mb-0">
-        **Interface Theme**
+    <div className="">
+      <label htmlFor="theme-selector" className="">
       </label>
       
-      <div className="w-full sm:w-48">
+      <div className="">
         <StyledSelect 
           id="theme-selector"
           value={theme}

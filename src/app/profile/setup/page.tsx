@@ -118,7 +118,7 @@ export default function ProfileSetupPage() {
   return (
     <div className="flex flex-col min-h-screen w-full">
       <Header /> {/* ← Add header here */}
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#2d1e0f] to-[#3b2d1d] text-white flex flex-col items-center p-6">
+      <div className="min-h-screen w-full bg-background text-foreground flex flex-col items-center p-6 transition-colors duration-300">
       <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">
         Complete Your Artist Profile 🪶
       </h1>

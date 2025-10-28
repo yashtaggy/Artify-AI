@@ -10,14 +10,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Settings, Edit2, Home } from "lucide-react";
+import { User, LogOut, Settings, Edit2, Home, Compass } from "lucide-react";
 import Link from "next/link";
+import AppTour from "@/components/onboarding/AppTour"; // ✅ import tour component
 
 const logo = "/logo.png";
 
 export function Header() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  const [startTour, setStartTour] = useState(false); // ✅ control manual tour start
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -34,6 +36,12 @@ export function Header() {
   const handleProfile = () => router.push("/profile/setup");
   const handleSettings = () => router.push("/settings");
   const handleDashboard = () => router.push("/");
+
+  const handleStartTour = () => {
+    // ✅ Reset tour flag and trigger it manually
+    localStorage.setItem("artifyaiTourSeen", "false");
+    setStartTour(true);
+  };
 
   return (
     <header className="relative flex items-center justify-between border-b bg-card px-6 py-4 shadow-sm h-20">
@@ -61,7 +69,6 @@ export function Header() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="relative">
-              {/* Name Button */}
               <Button
                 variant="outline"
                 className="flex items-center gap-2 pr-10 pl-4 py-2"
@@ -88,7 +95,7 @@ export function Header() {
             </div>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-44 mt-2">
+          <DropdownMenuContent align="end" className="w-52 mt-2">
             <DropdownMenuItem
               onClick={handleDashboard}
               className="flex items-center gap-2"
@@ -110,6 +117,14 @@ export function Header() {
               <Settings size={16} /> Settings
             </DropdownMenuItem>
 
+            {/* ✅ New Tour Button */}
+            <DropdownMenuItem
+              onClick={handleStartTour}
+              className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400"
+            >
+              <Compass size={16} /> Take ArtifyAI Tour
+            </DropdownMenuItem>
+
             <DropdownMenuItem
               onClick={handleLogout}
               className="flex items-center gap-2 text-destructive"
@@ -119,6 +134,9 @@ export function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* ✅ AppTour trigger */}
+      {startTour && <AppTour manualStart />}
     </header>
   );
 }

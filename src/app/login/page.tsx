@@ -9,8 +9,9 @@ import { useToast } from "@/hooks/use-toast";
 import ArtifyLogo from "@/components/ArtifyLogo";
 import WaveBackground from "@/components/WaveBackground";
 import { signInWithGoogle } from "@/lib/firebaseAuth";
-import { db } from "@/lib/firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,49 +40,48 @@ export default function LoginPage() {
     setAuthLoading(true);
 
     try {
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("email", "==", email));
-      const querySnapshot = await getDocs(q);
+      // ✅ Authenticate using Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const uid = user.uid;
 
-      if (querySnapshot.empty) {
-        toast({
-          title: "Login Failed",
-          description: "Invalid email or password",
-          variant: "destructive",
-        });
-        return;
+      // ✅ Fetch corresponding Firestore document (profile data)
+      const userDocRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userDocRef);
+
+      let userData: any = {};
+      if (userDoc.exists()) {
+        userData = userDoc.data();
       }
 
-      let userFound: any = null;
-      querySnapshot.forEach((doc) => {
-        if (doc.data().password === password) {
-          userFound = { id: doc.id, ...doc.data() };
-        }
-      });
+      const finalUser = {
+        id: uid,
+        name: user.displayName || userData.name || "",
+        email: user.email,
+        photoURL: user.photoURL || userData.photoURL || "",
+        ...userData,
+        completedProfile: userData.completedProfile ?? false,
+      };
 
-      if (!userFound) {
-        toast({
-          title: "Login Failed",
-          description: "Invalid email or password",
-          variant: "destructive",
-        });
-        return;
-      }
+      // ✅ Save locally
+      localStorage.setItem("currentUser", JSON.stringify(finalUser));
 
-      // Save full Firestore user document in localStorage
-      localStorage.setItem("currentUser", JSON.stringify(userFound));
-
-      router.push(userFound.completedProfile ? "/" : "/profile/setup");
+      router.push(finalUser.completedProfile ? "/" : "/profile/setup");
 
       toast({
         title: "Login Successful",
-        description: `Welcome back, ${userFound.name}!`,
+        description: `Welcome back, ${finalUser.name || "User"}!`,
       });
-    } catch (err) {
-      console.error(err);
+    } catch (error: any) {
+      console.error("Login error:", error);
+      let message = "Something went wrong.";
+      if (error.code === "auth/user-not-found") message = "No account found with this email.";
+      if (error.code === "auth/wrong-password") message = "Incorrect password.";
+      if (error.code === "auth/invalid-email") message = "Invalid email format.";
+
       toast({
         title: "Login Failed",
-        description: "Something went wrong",
+        description: message,
         variant: "destructive",
       });
     } finally {
