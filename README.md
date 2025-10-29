@@ -1,321 +1,275 @@
-# 🎨 Artify AI 
-
-> **AI-Powered Marketplace Assistant for Local Artisans**
-
-**Artify AI** is an **AI-driven platform** designed to empower **local artisans** to market their craft, tell their stories, and expand their reach to digital audiences. The platform combines **Google Gemini 2.5 (Flash & Pro)**, **Cohere(command-a-03-2025)**, and **Hugging Face BERT** models to generate creative stories, identify trends, optimize craft pricing, and produce engaging ad creatives.
-
-## 🧩 Problem Statement
-
-**Many talented artisans struggle with:**
-- 📱 Digital marketing and online presence
-- 📖 Compelling storytelling about their craft
-- 💰 Optimal pricing strategies
-- 🔍 Market trend identification
-- 🎬 Creating engaging ad content
-
-**CraftGenie Solution:**
-Bridges this gap by providing **AI-powered storytelling, trend analysis, pricing optimization, and creative assistance** in one simple, user-friendly platform.
-
-## 🚀 Features
-
-### 🧵 Story Generator
-- **AI-Powered Storytelling**: Generate captivating narratives using Gemini 2.5 Flash/Pro
-- **Provenance Cards**: Automatic creation with product details, origin, and artisan story
-- **Multimodal Input**: Support for text + image inputs
-- **Export Options**: Download or save stories to personal library
-
-### 📈 Trends Finder
-- **Market Analysis**: Identify emerging craft styles using Cohere embeddings
-- **Keyword Suggestions**: Popular tags, colors, and materials
-- **Regional Insights**: Location-based trend discovery
-- **Competitive Intelligence**: Stay ahead of market demands
-
-### 💰 Craft Score & Pricing
-- **Smart Pricing**: Optimized pricing based on multiple factors:
-  - Product image analysis
-  - Material costs
-  - Time investment
-  - Energy consumption
-- **Sustainability Scoring**: Eco-friendliness evaluation using Hugging Face BERT
-- **Profit Optimization**: AI suggestions for margin improvement
-
-### 🎥 Ad Creatives Generator
-- **Multi-Platform Support**: Content for YouTube Shorts, Instagram Reels, Facebook Ads
-- **Storyboard Creation**: Scene-by-scene visual planning
-- **Copy Generation**: Headlines, captions, and CTAs using Gemini Pro
-- **Brand Consistency**: Maintain cohesive brand identity across platforms
-
-### 📚 My Library
-- **Centralized Storage**: Save and manage all generated content
-- **Performance Tracking**: Monitor engagement and effectiveness
-- **Easy Sharing**: Download and share assets directly
-- **Organization**: Categorize by project type and date
-
-## 🛠 Tech Stack
-
-### Frontend
-- **Framework**: Next.js 14 with TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: Shadcn/UI
-- **Animations**: Framer Motion
-- **Icons**: Lucide Icons
-
-### Backend & AI
-- **Runtime**: Node.js
-- **AI Models**: 
-  - Google Gemini 2.5 (Flash & Pro)
-  - Cohere Command-R
-  - Hugging Face BERT
-- **APIs**: Next.js API Routes
-
-### Database & Infrastructure
-- **Authentication**: Firebase Auth
-- **Database**: Firestore
-- **Storage**: Firebase Storage
-- **Serverless**: Firebase Cloud Functions
-- **Deployment**: Firebase Hosting
-
-## 📥 Installation
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-- Firebase account
-- AI API keys (Gemini, Cohere, Hugging Face)
-
-### Step-by-Step Setup
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/tanmaykhedekar/craftgenie.git
-cd craftgenie
-```
-
-2. **Install dependencies**
-```bash
-npm install
-# or
-yarn install
-```
-
-3. **Set up environment variables**
-```bash
-cp .env.example .env.local
-```
-
-4. **Configure Firebase**
-```bash
-npm install -g firebase-tools
-firebase login
-firebase init
-```
-
-5. **Run development server**
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-The application will be available at `http://localhost:3000`
-
-## ⚙️ Configuration
-
-### Environment Variables
-Create a `.env.local` file in the root directory:
-
-```env
-# Firebase Configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-
-# AI API Keys
-GEMINI_API_KEY=your_gemini_api_key
-COHERE_API_KEY=your_cohere_api_key
-HUGGINGFACE_API_KEY=your_huggingface_api_key
-
-# Optional: Analytics
-NEXT_PUBLIC_GA_ID=your_google_analytics_id
-```
-
-### Firebase Setup
-1. Create a new Firebase project
-2. Enable Authentication (Email/Password)
-3. Set up Firestore Database
-4. Configure Storage Bucket
-5. Enable Cloud Functions (if needed)
-
-## 🎯 Usage
-
-### For Artisans
-1. **Sign Up**: Create an artisan account
-2. **Profile Setup**: Complete your profile and craft details
-3. **Generate Content**: Use AI tools for stories, pricing, and ads
-4. **Manage Library**: Save and organize your generated assets
-5. **Export & Share**: Download content for your platforms
-
-### For Developers
-```typescript
-// Example: Generating a product story
-import { generateProductStory } from '@/src/ai/flows/generate-product-story';
-
-const story = await generateProductStory({
-  productName: "Handwoven Silk Scarf",
-  materials: ["silk", "natural dyes"],
-  artisanBio: "Third generation weaver...",
-  productImage: imageFile
-});
-```
-
-## 🔌 API Documentation
-
-### Story Generation Endpoint
-```http
-POST /api/generate-story
-Content-Type: application/json
-
-{
-  "productName": "string",
-  "description": "string",
-  "materials": ["string"],
-  "artisanStory": "string",
-  "imageUrl": "string"
-}
-```
-
-### Pricing Analysis Endpoint
-```http
-POST /api/analyze-pricing
-Content-Type: application/json
-
-{
-  "productData": {
-    "materials": ["string"],
-    "timeRequired": number,
-    "energyConsumed": number,
-    "complexity": "low|medium|high"
-  }
-}
-```
-
-## 🚀 Deployment
-
-### Firebase Hosting
-```bash
-# Build the application
-npm run build
-
-# Deploy to Firebase
-firebase deploy
-```
-
-### Environment Setup for Production
-1. Set environment variables in Firebase Console
-2. Configure custom domain (optional)
-3. Set up monitoring and analytics
-4. Configure security rules for Firestore and Storage
-
-## 🏗 Project Structure
-
-```
-craftgenie/
-├── src/
-│   ├── app/                 # Next.js app router
-│   ├── components/          # React components
-│   │   ├── ui/             # Reusable UI components
-│   │   └── features/       # Feature-specific components
-│   ├── ai/                 # AI integration flows
-│   │   └── flows/          # Individual AI workflows
-│   └── lib/               # Utilities and configurations
-├── functions/             # Firebase Cloud Functions
-├── public/               # Static assets
-└── docs/                 # Documentation
-```
-
-## 🤝 Contributing
-
-We welcome contributions from developers, designers, and AI enthusiasts!
-
-### Development Workflow
-
-1. **Fork the repository**
-2. **Create a feature branch**
-```bash
-git checkout -b feature/amazing-feature
-```
-3. **Make your changes**
-4. **Commit your changes**
-```bash
-git commit -m 'Add amazing feature'
-```
-5. **Push to the branch**
-```bash
-git push origin feature/amazing-feature
-```
-6. **Open a Pull Request**
-
-### Development Guidelines
-- Follow TypeScript best practices
-- Use meaningful commit messages
-- Add tests for new features
-- Update documentation accordingly
-- Follow the existing code style
-
-## 👥 Team
-
-### Core Development Team
-
-#### **Yash Tagunde** - Team Lead
-- 🎓 Final-year B.Tech — Computer Science & Engineering
-- 📍 Pune, India
-- 💡 Full Stack Developer | Project Management
-- 🔗 [LinkedIn](https://www.linkedin.com/in/yash-t-a4330b1b5/) • [GitHub](https://github.com/yashtaggy)
-
-#### **Tanmay Khedekar** - Lead Developer
-- 🎓 Final-year B.Tech — Computer Science & Engineering
-- 📍 Pune, India
-- 💡 AI & ML Enthusiast | Full Stack Developer
-- 🔗 [LinkedIn](https://www.linkedin.com/in/tanmay-khedekar-b66b43226/) • [GitHub](https://github.com/TanmayKhedekar)
-
-### Contributors
-We welcome contributions from the open-source community! Special thanks to all our contributors.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-- 📧 Email: contact.craftgenie@gmail.com
-- 🐛 [Issue Tracker](https://github.com/yashtaggy/Artify-AI.git)
-- 📖 [Documentation Wiki](https://github.com/tanmaykhedekar/craftgenie/wiki)
-
-## 🗺 Roadmap
-
-### Version 2.1 (Upcoming)
-- [ ] Multi-language support (Hindi, Marathi)
-- [ ] Voice narration for stories
-- [ ] Advanced analytics dashboard
-- [ ] Marketplace integration
-
-### Version 2.2 (Planned)
-- [ ] Mobile app development
-- [ ] Social media auto-posting
-- [ ] E-commerce integration
-- [ ] Community features
-
----
-
-<div align="center">
-
-**✨ Empowering artisans to tell their stories, connect with audiences, and grow through the power of AI.**
-
-[Get Started](#installation) • [View Demo](https://craftgenie-demo.vercel.app) • [Report Bug](https://github.com/tanmaykhedekar/craftgenie/issues)
-
-*Built with ❤️ by Yash Tagunde, Tanmay Khedekar and the Artify AI team*
-
-</div>
+🎨 Artify AI — AI-Powered Marketplace Assistant for Local Artisans.
+Empowering Traditional Craftsmanship through Generative AI and Data Intelligence
+🧩 Problem Statement
+
+Local artisans often face challenges in marketing their crafts, sharing their authentic stories, and reaching wider digital audiences.
+They lack access to data-driven insights, storytelling tools, and marketing resources that larger brands have — making it difficult to scale their craft sustainably.
+
+Challenge: Create an AI-driven platform that helps local artisans market their craft, tell their stories, and expand their reach to digital audiences.
+
+🚀 Proposed Solution — Our Platform
+
+Our platform is an AI-Powered Marketplace Assistant designed specifically for local artisans.
+It leverages Generative AI, Data Analytics, and Sustainability Insights to help artisans showcase their creativity, understand market demand, and expand their presence globally.
+
+Built using Next.js, Firebase, Cohere AI, and Gemini AI (Flash 2.5) — with a modern, secure, and responsive UI.
+
+⚙️ Architecture Overview
+Main Components:
+
+Frontend: Next.js (React Framework)
+
+Backend & Database: Firebase Firestore & Firebase Authentication
+
+AI Models:
+
+Gemini Flash 2.5 (Google): Story Generator, Trend Finder
+
+Cohere Command R+ 03-2025: Craft Score, Market Analysis, Ad Creatives
+
+Mathematical Engine: Sustainability and cost optimization formulas
+
+Storage: Firebase Cloud Storage (for images, stories, and provenance cards)
+
+Security: Firebase Auth with OTP/Email Verification
+
+Visualization: Chart.js / D3.js for Market Graphs
+
+Environment Management: .env for secure API key storage
+
+🧠 How It Works (Architecture Flow)
+
+User Interaction:
+
+User logs in or signs up through Firebase Authentication.
+
+Dashboard provides modules: Story Generator, Trend Finder, Craft Score, Market Demand, Ad Creatives, My Library.
+
+AI Processing:
+
+User uploads product image + description.
+
+Gemini AI generates an emotional story and provenance card.
+
+Trend Finder analyzes story & SEO keywords for visibility.
+
+Craft Score uses Cohere AI + mathematical model for sustainability analysis.
+
+Market Demand uses Cohere AI to visualize data and predictions.
+
+Ad Creatives generate platform-specific ad content & Sora video scenes.
+
+Data Storage:
+
+All user data, stories, and provenance cards are saved in Firebase Database.
+
+User can view or download reports anytime.
+
+Visualization & Insights:
+
+Graphical trends, competitor maps, and cost optimization are displayed interactively.
+
+🌟 Key Features
+1️⃣ Story Generator (Gemini Flash 2.5)
+
+Upload product image and description.
+
+Generates authentic storytelling content about the craft and artisan journey.
+
+Produces a Provenance Card (mini digital certificate for the craft).
+
+Encourages emotional buyer connection.
+
+Example Output:
+“Handwoven with patience and love, this silk stole reflects the artistry of the weaver’s 20-year tradition from Pune.”
+
+2️⃣ Trend Finder
+
+Extracts trending keywords, hashtags, and topics for better social reach.
+
+Analyzes story context and predicts what style/content is performing best.
+
+Suggests keywords for SEO and social media optimization.
+
+3️⃣ Craft Score (Cohere Command-03-2025)
+
+Takes inputs like cost, materials, time, and energy used.
+
+Calculates:
+
+Optimized Cost
+
+Negotiated Price Range
+
+Sustainability Score
+
+Improvement Tips
+
+Based on a hybrid of AI reasoning + mathematical sustainability models.
+
+Example:
+Your product is 87% sustainable. Switching to natural dye and solar-dried processes can increase your score to 95%.
+
+4️⃣ Market Demand Analysis
+
+Generates 10-year demand graphs and 5-year predictions using AI and real data.
+
+Identifies top competitor regions and growth opportunities.
+
+Input validation: ensures meaningful analysis only for valid products (e.g., “clay pot” works, “asdfxx” doesn’t).
+
+Results can be downloaded as a report.
+
+5️⃣ Ad Creatives Generator
+
+Produces platform-specific ad captions, scripts, and notes for:
+
+YouTube
+
+Instagram
+
+Facebook
+
+Etsy
+
+Suggests scene breakdowns for video creation using Sora AI.
+
+Example:
+“Scene 1: Close-up of hands shaping clay. Scene 2: Slow-motion of kiln fire. Scene 3: Text overlay — ‘Handcrafted with heritage.’”
+
+6️⃣ My Library
+
+Saves generated stories and provenance cards.
+
+Acts as a personal content archive for artisans.
+
+Allows easy re-use for marketing or marketplace listings.
+
+🔒 Security & Authentication
+
+Built with Firebase Authentication (Email/Password & OAuth).
+
+Sends a welcome email upon first login.
+
+Provides dark, light, and default themes for accessibility.
+
+Encrypted storage using Firebase Firestore rules.
+
+🧰 Tech Stack
+Category	Tools/Frameworks Used
+Frontend	Next.js, Tailwind CSS
+Backend	Firebase Cloud Firestore
+Authentication	Firebase Auth
+AI Models	Gemini Flash 2.5, Cohere Command-03-2025
+Visualization	Chart.js, D3.js
+Deployment	Firebase Hosting / Vercel
+Storage	Firebase Storage
+Environment	.env for API keys
+Version Control	Git & GitHub
+📈 Innovation Highlights
+
+All-in-One AI Toolkit — combines storytelling, trend prediction, sustainability, and market analytics.
+
+Cross-AI Integration — Gemini + Cohere models working together.
+
+Smart Input Validation — prevents fake/irrelevant analyses.
+
+Sustainability-Centric — promotes eco-friendly craft optimization.
+
+Artisan-Friendly UI — minimal, intuitive, and multilingual-ready.
+
+🧮 Sustainability Formula (Simplified)
+Sustainability Score
+=
+(
+𝑀
++
+𝑇
++
+𝐸
+)
+𝐶
+×
+100
+Sustainability Score=
+C
+(M+T+E)
+	​
+
+×100
+
+Where:
+
+M = Material Eco-Factor
+
+T = Time Efficiency
+
+E = Energy Source Efficiency
+
+C = Product Cost Factor
+
+(Weights adjusted dynamically via AI insights.)
+
+🧩 Example Use Case
+
+Artisan: Meera, a handloom weaver from Pune.
+Goal: Increase visibility for her handmade silk scarves.
+
+Steps:
+
+Uploads product photo & description.
+
+Story Generator creates emotional narrative + provenance card.
+
+Trend Finder suggests keywords: “#HandloomHeritage #EcoSilk #MadeInIndia”.
+
+Craft Score shows sustainability at 82% — suggests solar drying.
+
+Market Demand shows growth in Europe & US markets.
+
+Ad Creative gives Instagram captions & Sora video scenes.
+
+Saves story in “My Library” for Etsy listing reuse.
+
+📊 Impact
+Area	Impact
+Economic	Boosts artisans’ digital reach & revenue
+Social	Preserves cultural heritage through storytelling
+Environmental	Encourages sustainable production practices
+Technological	Bridges AI with real-world artisan ecosystems
+🧠 Future Enhancements
+
+🌍 Multilingual Story Generator (regional Indian languages)
+
+🧾 Integration with e-commerce APIs (Etsy, Amazon Handmade)
+
+💬 AI Chat Assistant for artisan business guidance
+
+🪶 Blockchain Provenance Verification
+
+📹 Direct Sora AI video generation integration
+
+🏁 Conclusion
+
+Our project — AI-Powered Marketplace Assistant for Local Artisans — bridges tradition and technology, empowering local creators with tools to market their art authentically and sustainably.
+
+With AI storytelling, market intelligence, sustainability scoring, and ad creativity, this platform is a game-changer for artisan digital inclusion.
+
+🧾 Team Details
+
+Team Name: Artify AI
+Project Name: AI-Powered Marketplace Assistant for Local Artisans
+Program: H2Skilles Gen AI Exchange Hackathon
+Tech Stack: Next.js | Firebase | Gemini | Cohere | Chart.js
+Team Members:
+Yash Tagunde - Team Lead and Project Manager
+Tanmay Khedekar - AI/ML Engineer and lead Developer
+Shrishant Madke - Backend Developer and Researcher
+Vedant Patil - Frontend Developer
+
+🌐 Project Deployment & Contact
+
+🔗 Live Project Link: http://artifyai-599463248805.asia-south1.run.app
+ 
+📧 Contact Email: info.artifyai@gmail.com
+
