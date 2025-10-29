@@ -28,13 +28,7 @@ export function Footer() {
             href="mailto:yashtaggy1603@gmail.com"
             className="hover:text-primary transition-colors"
           >
-            yashtaggy1603@gmail.com
-          </a>
-          <a
-            href="mailto:khedekartanmay2004@gmail.com"
-            className="hover:text-primary transition-colors"
-          >
-            khedekartanmay2004@gmail.com
+            info.artifyai@gmail.com
           </a>
         </div>
 

@@ -65,7 +65,7 @@ export const sendWelcomeEmail = functions.auth.user().onCreate(async (user) => {
                     
                     <!-- Call to Action Button -->
                     <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
-                        <a href="https://artifyai-599463248805.asia-south1.run.app" style="display: inline-block; padding: 12px 25px; background-color: #FF2F92; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; transition: background-color 0.2s;">
+                        <a href="https://artify-ai-599463248805.asia-south1.run.app/" style="display: inline-block; padding: 12px 25px; background-color: #FF2F92; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; transition: background-color 0.2s;">
                             Explore Artify AI Now
                         </a>
                     </div>
