@@ -1,106 +1,143 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Joyride, { CallBackProps, STATUS, Step, Styles } from "react-joyride";
+import { TourProvider, useTour } from "@reactour/tour";
 
 interface AppTourProps {
   /** When true, starts tour manually (from Settings) */
   manualStart?: boolean;
 }
 
-export default function AppTour({ manualStart = false }: AppTourProps) {
-  const [run, setRun] = useState(false);
+const TourContent = ({ manualStart }: AppTourProps) => {
+  const { setIsOpen, currentStep, setCurrentStep, steps } = useTour();
   const [theme, setTheme] = useState<"light" | "dark">("light");
-
-  const [steps] = useState<Step[]>([
-    {
-      target: '[data-tour-id="story-generator"]',
-      content:
-        "✨ Welcome to the Story Generator — your creative playground! Here you can write prompts or ideas, and ArtifyAI will instantly craft compelling stories, ad scripts, or captions tailored to your needs. Use this space to unleash your creativity and experiment freely.",
-    },
-    {
-      target: '[data-tour-id="trends-finder"]',
-      content:
-        "📈 The Trends Finder helps you stay ahead of the curve by analyzing what’s popular right now. Discover trending topics, hashtags, and creative patterns to inspire your next piece of content or marketing campaign.",
-    },
-    {
-      target: '[data-tour-id="craft-score"]',
-      content:
-        "⭐ The Craft Score is your story’s performance analyzer. It evaluates your generated content for engagement, tone, and structure — helping you improve your storytelling quality and understand how your audience might react.",
-    },
-    {
-      target: '[data-tour-id="ad-creatives"]',
-      content:
-        "🎨 The Ad Creatives tool transforms your story or idea into professional-quality ad visuals and copy. You can generate image concepts, catchy taglines, and ready-to-use promotional content with just a few clicks.",
-    },
-    {
-      target: '[data-tour-id="library"]',
-      content:
-        "📚 Welcome to your Library — your personal archive of everything you’ve created. All your generated stories, ads, and ideas are automatically saved here so you can revisit, edit, or reuse them anytime.",
-    },
-  ]);
 
   useEffect(() => {
     const tourSeen = localStorage.getItem("artifyaiTourSeen");
 
+    // Detect theme mode
     const observer = new MutationObserver(() => {
       const isDark = document.documentElement.classList.contains("dark");
       setTheme(isDark ? "dark" : "light");
     });
-
     observer.observe(document.documentElement, { attributes: true });
+
     setTheme(
       document.documentElement.classList.contains("dark") ? "dark" : "light"
     );
 
     if (manualStart) {
-      setRun(true);
+      setIsOpen(true);
       return;
     }
 
     if (!tourSeen) {
-      setRun(true);
+      setIsOpen(true);
     }
 
     return () => observer.disconnect();
-  }, [manualStart]);
+  }, [manualStart, setIsOpen]);
 
-  const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status } = data;
-    const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
-
-    if (finishedStatuses.includes(status) && !manualStart) {
+  // When tour completes or is closed
+  useEffect(() => {
+    if (currentStep === steps.length - 1) {
       localStorage.setItem("artifyaiTourSeen", "true");
-      setRun(false);
     }
-  };
+  }, [currentStep, steps.length]);
 
-  const dynamicStyles: Styles = {
-    options: {
-      zIndex: 10000,
-      primaryColor: "hsl(var(--primary))",
-      backgroundColor:
-        theme === "dark"
-          ? "hsl(var(--card))"
-          : "hsl(var(--background))",
-      textColor: "hsl(var(--foreground))",
+  return null;
+};
+
+export default function AppTour({ manualStart = false }: AppTourProps) {
+  const steps = [
+    {
+      selector: '[data-tour-id="story-generator"]',
+      content:
+        "✨ Welcome to the Story Generator — your creative playground! Write prompts or ideas and watch ArtifyAI instantly craft stories, ad scripts, or captions.",
     },
-    tooltipContainer: {
-      borderRadius: "0.75rem",
-      padding: "1rem",
+    {
+      selector: '[data-tour-id="trends-finder"]',
+      content:
+        "📈 The Trends Finder helps you stay ahead of the curve by analyzing what’s popular right now. Discover trending topics and creative inspiration.",
     },
-  };
+    {
+      selector: '[data-tour-id="craft-score"]',
+      content:
+        "⭐ The Craft Score evaluates your content for engagement, tone, and structure — helping you understand and refine your storytelling quality.",
+    },
+    {
+      selector: '[data-tour-id="ad-creatives"]',
+      content:
+        "🎨 The Ad Creatives tool transforms your ideas into professional visuals and ad copy in seconds. Perfect for quick campaign launches.",
+    },
+    {
+      selector: '[data-tour-id="library"]',
+      content:
+        "📚 Your Library stores all your generated stories, ads, and ideas — organized, editable, and ready to reuse anytime.",
+    },
+  ];
+
+  const theme = document.documentElement.classList.contains("dark")
+    ? "dark"
+    : "light";
 
   return (
-    <Joyride
+    <TourProvider
       steps={steps}
-      run={run}
-      continuous
-      showProgress
-      showSkipButton
-      disableScrolling
-      callback={handleJoyrideCallback}
-      styles={dynamicStyles}
-    />
+      padding={10}
+      scrollSmooth
+      disableKeyboardNavigation={false}
+      showNavigation
+      showDots
+      showBadge={false}
+      styles={{
+        popover: (base) => ({
+          ...base,
+          borderRadius: "1rem",
+          backgroundColor:
+            theme === "dark"
+              ? "hsl(var(--card) / 0.95)"
+              : "hsl(var(--background) / 0.95)",
+          color: "hsl(var(--foreground))",
+          boxShadow:
+            theme === "dark"
+              ? "0 6px 18px rgba(0,0,0,0.5)"
+              : "0 6px 18px rgba(0,0,0,0.15)",
+          padding: "1.25rem 1.5rem",
+          maxWidth: 400,
+        }),
+        maskArea: (base) => ({
+          ...base,
+          rx: 16,
+          ry: 16,
+        }),
+        maskWrapper: (base) => ({
+          ...base,
+          color:
+            theme === "dark"
+              ? "rgba(0,0,0,0.55)"
+              : "rgba(255,255,255,0.4)",
+        }),
+        badge: (base) => ({
+          ...base,
+          backgroundColor: "hsl(var(--primary))",
+          color: "white",
+          borderRadius: "0.5rem",
+        }),
+        controls: (base) => ({
+          ...base,
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "1rem",
+        }),
+        close: (base) => ({
+          ...base,
+          color: "hsl(var(--muted-foreground))",
+          fontWeight: 400,
+        }),
+      }}
+    >
+      <TourContent manualStart={manualStart} />
+    </TourProvider>
   );
 }

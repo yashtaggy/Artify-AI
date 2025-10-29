@@ -218,8 +218,6 @@ export default function Home() {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* 👇 Add the App Tour here */}
       <AppTour />
     </div>
   );
