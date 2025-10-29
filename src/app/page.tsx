@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StoryGenerator } from "@/components/features/story-generator";
 import { TrendFinder } from "@/components/features/trend-finder";
 import { AdGenerator } from "@/components/features/ad-generator";
+import { Footer } from "@/components/footer";
 import { MarketDemand } from "@/components/features/market-demand";
 import { BarChart3 } from "lucide-react";
 import { CraftScore } from "@/components/features/craft-score";
@@ -30,7 +31,6 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-// 👇 Add this import
 import AppTour from "@/components/onboarding/AppTour";
 
 export default function Home() {
@@ -84,31 +84,26 @@ export default function Home() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <Header />
-
-      <main className="flex-1 p-4 md:p-8">
+      <main className="flex-1 px-2 sm:px-4 md:px-8 py-4">
         <Tabs defaultValue="story-generator" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-6 mx-auto mb-6 max-w-5xl">
-
-            <TabsTrigger
-              value="story-generator"
-              data-tour-id="story-generator"
-            >
-              <Sparkles className="mr-2" /> Story Generator
+        <TabsList className="flex w-full overflow-x-auto no-scrollbar gap-2 sm:gap-3 justify-start sm:justify-center px-2 py-2">
+            <TabsTrigger value="story-generator" data-tour-id="story-generator" className="flex items-center gap-2 px-3 py-2 text-sm sm:text-base">
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" /> Story Generator
             </TabsTrigger>
-            <TabsTrigger value="trend-finder" data-tour-id="trends-finder">
-              <TrendingUp className="mr-2" /> Trend Finder
+            <TabsTrigger value="trend-finder" data-tour-id="trends-finder" className="flex items-center gap-2 px-3 py-2 text-sm sm:text-base">
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" /> Trend Finder
             </TabsTrigger>
-            <TabsTrigger value="craft-score" data-tour-id="craft-score">
-              <Megaphone className="mr-2" /> Craft Score
+            <TabsTrigger value="craft-score" data-tour-id="craft-score" className="flex items-center gap-2 px-3 py-2 text-sm sm:text-base">
+              <Megaphone className="h-4 w-4 sm:h-5 sm:w-5" /> Craft Score
             </TabsTrigger>
-            <TabsTrigger value="market-demand" data-tour-id="market-demand">
-              <BarChart3 className="mr-2" /> Market Demand
+            <TabsTrigger value="market-demand" data-tour-id="market-demand" className="flex items-center gap-2 px-3 py-2 text-sm sm:text-base">
+              <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5" /> Market Demand
             </TabsTrigger>
-            <TabsTrigger value="ad-generator" data-tour-id="ad-creatives">
-              <PenTool className="mr-2" /> Ad-Creatives
+            <TabsTrigger value="ad-generator" data-tour-id="ad-creatives" className="flex items-center gap-2 px-3 py-2 text-sm sm:text-base">
+              <PenTool className="h-4 w-4 sm:h-5 sm:w-5" /> Ad-Creatives
             </TabsTrigger>
-            <TabsTrigger value="my-library" data-tour-id="library">
-              <BookOpen className="mr-2" /> My Library
+            <TabsTrigger value="my-library" data-tour-id="library" className="flex items-center gap-2 px-3 py-2 text-sm sm:text-base">
+              <BookOpen className="h-4 w-4 sm:h-5 sm:w-5" /> My Library
             </TabsTrigger>
           </TabsList>
 
@@ -148,7 +143,7 @@ export default function Home() {
                 You haven’t saved any stories yet.
               </p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                 {savedStories.map((story) => (
                   <Card
                     key={story.id}
@@ -186,7 +181,7 @@ export default function Home() {
 
       {/* Story Modal */}
       <Dialog open={!!selectedStory} onOpenChange={() => setSelectedStory(null)}>
-        <DialogContent className="max-w-3xl w-full">
+        <DialogContent className="w-[90vw] sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle>
               {selectedStory?.content?.title ||
@@ -219,6 +214,7 @@ export default function Home() {
         </DialogContent>
       </Dialog>
       <AppTour />
+      <Footer />
     </div>
   );
 }
