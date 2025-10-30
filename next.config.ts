@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    unoptimized: true,  // 👈 Required for static export (no Next.js image optimization)
+    unoptimized: true, // 👈 Required for static export (no Next.js image optimization)
     remotePatterns: [
       {
         protocol: 'https',
@@ -29,6 +29,13 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+  },
+
+  // ✅ Add this section below
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '20mb', // Increase default 1MB limit
+    },
   },
 };
 
