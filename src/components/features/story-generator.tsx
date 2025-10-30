@@ -11,7 +11,7 @@ import type { StoryGenerationState } from '@/app/actions';
 import { handleGenerateStory } from '@/app/actions';
 import { StoryGeneratorSchema } from '@/lib/schemas';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';    
 import {
   Card,
   CardContent,
@@ -70,6 +70,18 @@ export function StoryGenerator() {
     PlaceHolderImages[0]?.imageUrl || null
   );
   const [imageBase64, setImageBase64] = useState<string | undefined>(undefined);
+  // 🔠 Translation Feature States
+  const [targetLanguage, setTargetLanguage] = useState("fr"); // Default: French
+  const [translatedText, setTranslatedText] = useState<string | null>(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  const [story, setStory] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+
   const formRef = useRef<HTMLFormElement>(null);
   const cardRef = useRef<HTMLDivElement>(null); // 🔥 Added ref for Provenance Card
 
@@ -181,6 +193,101 @@ export function StoryGenerator() {
       });
     }
   };
+
+  // 🔥 Translate Story Function using Vertex AI Translation API
+const handleTranslateStory = async () => {
+  if (!state.result?.productDescriptionLong) return;
+
+  setIsTranslating(true);
+  setTranslatedText(null);
+
+  try {
+    const response = await fetch("/api/translate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: state.result.productDescriptionLong,
+        targetLanguage,
+      }),
+    });
+
+    if (!response.ok) throw new Error("Translation failed");
+
+    const data = await response.json();
+    setTranslatedText(data.translatedText);
+  } catch (error) {
+    console.error(error);
+    toast({
+      title: "Translation Failed",
+      description: "Please try again later.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsTranslating(false);
+  }
+};
+
+// 🎧 Text-to-Speech Function for English Story
+const handleListen = async () => {
+  if (!state.result?.productDescriptionLong) return;
+
+  try {
+    // If audio already exists, play it again
+    if (audioRef.current) {
+      audioRef.current.play();
+      setPlaying(true);
+      setPaused(false);
+      return;
+    }
+
+    setPlaying(true);
+    const response = await fetch("/api/speech", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: state.result.productDescriptionLong,
+        languageCode: "en-US",
+      }),
+    });
+
+    const data = await response.json();
+    if (data.audioBase64) {
+      const audio = new Audio("data:audio/mp3;base64," + data.audioBase64);
+      audioRef.current = audio;
+
+      audio.play();
+      audio.onended = () => {
+        setPlaying(false);
+        setPaused(false);
+        audioRef.current = null;
+      };
+    } else {
+      throw new Error("Audio not received");
+    }
+  } catch (error) {
+    console.error("Speech error:", error);
+    toast({
+      title: "Playback Error",
+      description: "Could not generate audio. Please try again.",
+      variant: "destructive",
+    });
+    setPlaying(false);
+  }
+};
+
+// ⏸️ Pause/Resume Handler
+const handlePauseResume = () => {
+  const audio = audioRef.current;
+  if (!audio) return;
+
+  if (paused) {
+    audio.play();
+    setPaused(false);
+  } else {
+    audio.pause();
+    setPaused(true);
+  }
+};
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -326,6 +433,26 @@ export function StoryGenerator() {
                       Detailed Description
                     </h3>
                     <p className="font-body text-foreground/90 whitespace-pre-wrap">
+                      {/* 🎧 Listen Button */}
+                      <div className="mt-3 flex gap-3">
+                      <Button
+                        onClick={handleListen}
+                        disabled={playing && !paused}
+                        className="bg-primary text-white hover:bg-primary/90 flex items-center gap-2"
+                      >
+                        {playing && !paused ? "🔊 Playing..." : "▶️ Listen"}
+                      </Button>
+                              
+                      {playing && (
+                        <Button
+                          onClick={handlePauseResume}
+                          className="bg-secondary text-black hover:bg-secondary/90 flex items-center gap-2"
+                        >
+                          {paused ? "⏯ Resume" : "⏸ Pause"}
+                        </Button>
+                      )}
+                    </div>
+                      
                       {state.result.productDescriptionLong}
                     </p>
                   </div>
@@ -338,6 +465,39 @@ export function StoryGenerator() {
                       {state.result.socialMediaPost}
                     </p>
                   </div>
+                  {/* 🌍 Translation Section */}
+                <Separator />
+                <div>
+                  <h3 className="font-semibold text-lg mb-2 text-primary">Translate Story</h3>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <select
+                      value={targetLanguage}
+                      onChange={(e) => setTargetLanguage(e.target.value)}
+                      className="border border-gray-300 rounded-md p-2 w-full sm:w-1/2"
+                    >
+                      <option value="fr">French 🇫🇷</option>
+                      <option value="es">Spanish 🇪🇸</option>
+                      <option value="de">German 🇩🇪</option>
+                      <option value="hi">Hindi 🇮🇳</option>
+                      <option value="ja">Japanese 🇯🇵</option>
+                    </select>
+                    <Button
+                      onClick={handleTranslateStory}
+                      disabled={isTranslating}
+                      className="bg-primary text-white hover:bg-primary/90"
+                    >
+                      {isTranslating ? "Translating..." : "Translate"}
+                    </Button>
+                  </div>
+                          
+                  {translatedText && (
+                    <div className="mt-4 p-3 border rounded-md bg-muted/50">
+                      <h4 className="font-semibold mb-2">Translated Story:</h4>
+                      <p className="whitespace-pre-wrap">{translatedText}</p>
+                    </div>
+                  )}
+                </div>
+
                 </CardContent>
 
                 {/* Save Story Button */}

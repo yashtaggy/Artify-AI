@@ -35,7 +35,7 @@ export function Header() {
 
   const handleProfile = () => router.push("/profile/setup");
   const handleSettings = () => router.push("/settings");
-  const handleDashboard = () => router.push("/");
+  const handleDashboard = () => router.push("/dashboard");
 
   const handleStartTour = () => {
     // ✅ Reset tour flag and trigger it manually

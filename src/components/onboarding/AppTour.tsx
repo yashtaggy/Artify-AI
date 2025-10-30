@@ -9,23 +9,23 @@ interface AppTourProps {
 }
 
 const TourContent = ({ manualStart }: AppTourProps) => {
-  const { setIsOpen, currentStep, setCurrentStep, steps } = useTour();
+  const { setIsOpen, currentStep, setCurrentStep, steps, isOpen } = useTour();
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
     const tourSeen = localStorage.getItem("artifyaiTourSeen");
 
-    // Detect theme mode
+    // Observe theme mode changes
     const observer = new MutationObserver(() => {
       const isDark = document.documentElement.classList.contains("dark");
       setTheme(isDark ? "dark" : "light");
     });
     observer.observe(document.documentElement, { attributes: true });
-
     setTheme(
       document.documentElement.classList.contains("dark") ? "dark" : "light"
     );
 
+    // Show the tour only if not seen before or manualStart is true
     if (manualStart) {
       setIsOpen(true);
       return;
@@ -38,7 +38,14 @@ const TourContent = ({ manualStart }: AppTourProps) => {
     return () => observer.disconnect();
   }, [manualStart, setIsOpen]);
 
-  // When tour completes or is closed
+  // ✅ When user closes or finishes the tour — mark it as seen
+  useEffect(() => {
+    if (!isOpen) {
+      localStorage.setItem("artifyaiTourSeen", "true");
+    }
+  }, [isOpen]);
+
+  // ✅ Also ensure flag is set when last step is reached
   useEffect(() => {
     if (currentStep === steps.length - 1) {
       localStorage.setItem("artifyaiTourSeen", "true");
@@ -68,12 +75,12 @@ export default function AppTour({ manualStart = false }: AppTourProps) {
     {
       selector: '[data-tour-id="ad-creatives"]',
       content:
-        "🎨 The Ad Creatives tool transforms your ideas into professional visuals and ad copy in seconds. Perfect for quick campaign launches.",
+        "🎨 The Ad Creatives tool transforms your ideas into ad copy in seconds. Perfect for quick campaign launches.",
     },
     {
       selector: '[data-tour-id="library"]',
       content:
-        "📚 Your Library stores all your generated stories, ads, and ideas — organized, editable, and ready to reuse anytime.",
+        "📚 Your Library stores all your generated stories ready to reuse anytime.",
     },
   ];
 

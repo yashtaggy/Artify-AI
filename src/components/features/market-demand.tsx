@@ -146,8 +146,20 @@ export const MarketDemand = () => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground))" opacity={0.2} />
-                  <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" />
-                  <YAxis stroke="hsl(var(--muted-foreground))" />
+                  <XAxis
+                    dataKey="year"
+                    stroke="hsl(var(--muted-foreground))"
+                    label={{ value: "Year", position: "insideBottom", offset: -5 }}
+                  />
+                  <YAxis
+                    stroke="hsl(var(--muted-foreground))"
+                    label={{
+                      value: "Demand Index",
+                      angle: -90,
+                      position: "insideLeft",
+                      style: { textAnchor: "middle" },
+                    }}
+                  />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "hsl(var(--card))",

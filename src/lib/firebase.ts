@@ -8,6 +8,7 @@ import {
   setPersistence,
   browserSessionPersistence,
 } from "firebase/auth";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 // --- FIREBASE CONFIG (YOUR PROJECT CONFIG) ---
 const firebaseConfig = {
@@ -25,6 +26,15 @@ const initialAuthToken = (globalThis as any)?.__initial_auth_token ?? null;
 
 // --- Initialize Firebase only once ---
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
+// ✅ --- Initialize App Check with reCAPTCHA v3 ---
+if (typeof window !== "undefined") {
+  const appCheck = initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider("6Ldj7vsrAAAAAA5V7C5SrXR_fSVQhr3z6q4V80nQ"), // 🔹 Replace with your actual site key
+    isTokenAutoRefreshEnabled: true, // Keeps App Check token fresh
+  });
+  console.log("✅ Firebase App Check initialized");
+}
 
 // --- Initialize Firestore, Storage, and Auth ---
 const db = getFirestore(app);

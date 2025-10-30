@@ -23,7 +23,7 @@ export default function LandingPage() {
     {
       title: "⭐ Craft Score",
       description:
-        "Get a professional evaluation of your product’s appeal and uniqueness. The Craft Score helps you understand how your product stands against market expectations and where it can shine more.",
+        "Get a professional evaluation of your product’s appeal, uniqueness and sustainability score. The Craft Score helps you understand how your product stands against market expectations and where it can shine more.",
     },
     {
       title: "🧭 Market Demand Analyzer",
@@ -38,7 +38,7 @@ export default function LandingPage() {
     {
       title: "📚 Artify Library",
       description:
-        "A growing hub of artisan success stories, craft guides, and business resources — designed to educate, inspire, and empower creators like you.",
+        "A storage of your saved stories ready to reuse again anytime",
     },
   ];
 
