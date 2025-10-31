@@ -1,10 +1,15 @@
 // app/api/speech/route.ts
 import { NextResponse } from "next/server";
 import textToSpeech from "@google-cloud/text-to-speech";
+import { vertex } from "@/lib/vertex-server";
+
 
 const client = new textToSpeech.TextToSpeechClient({
   keyFilename: "./key/vertex-translation.json",
 });
+
+const model = vertex.getGenerativeModel({ model: "gemini-1.5-flash" });
+const response = await model.generateContent("Hello world");
 
 export async function POST(req: Request) {
   try {

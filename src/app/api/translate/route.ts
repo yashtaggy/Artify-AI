@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { TranslationServiceClient } from "@google-cloud/translate";
+import { vertex } from "@/lib/vertex-server";
 
 // ✅ Initialize Google Cloud Translation client
 const translationClient = new TranslationServiceClient({
@@ -9,6 +10,10 @@ const translationClient = new TranslationServiceClient({
 // ✅ Define your project & location
 const projectId = "artifyai-891ba"; // <-- replace if different
 const location = "global";
+
+const model = vertex.getGenerativeModel({ model: "gemini-1.5-flash" });
+const response = await model.generateContent("Hello world");
+
 
 // ✅ POST handler
 export async function POST(req: Request) {
