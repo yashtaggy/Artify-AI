@@ -154,12 +154,21 @@ export function StoryGenerator() {
       const short = result.productDescriptionShort || '';
       const long = result.productDescriptionLong || '';
 
+      console.log("🧩 Saving story with:", {
+        user: user.uid || user.id,
+        title,
+        imageUrlLength: imageUrl?.length,
+        shortLength: short?.length,
+        longLength: long?.length,
+      });      
+      console.log("🟡 Attempting to save story...");
       await saveGeneratedItem(user.uid || user.id, 'story', {
         title,
         imageUrl,
         short,
         long,
       });
+      console.log("🟢 Story save function completed.");
 
       toast({
         title: 'Saved Successfully!',
@@ -432,7 +441,7 @@ const handlePauseResume = () => {
                     <h3 className="font-semibold text-lg mb-2 text-primary">
                       Detailed Description
                     </h3>
-                    <p className="font-body text-foreground/90 whitespace-pre-wrap">
+                    <div className="font-body text-foreground/90 whitespace-pre-wrap">
                       {/* 🎧 Listen Button */}
                       <div className="mt-3 flex gap-3">
                       <Button
@@ -454,7 +463,7 @@ const handlePauseResume = () => {
                     </div>
                       
                       {state.result.productDescriptionLong}
-                    </p>
+                    </div>
                   </div>
                   <Separator />
                   <div>

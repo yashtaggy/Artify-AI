@@ -8,6 +8,8 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 // Helper component for displaying key score metrics
 const ScoreMetric = ({ title, value, unit, colorClass }: { title: string, value: string, unit: string, colorClass: string }) => (
@@ -314,15 +316,26 @@ export function CraftScore() {
             </div>
             
             {/* AI Tips */}
-            <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-200 flex items-center">
-                    <Badge variant="secondary" className="mr-2 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">💡</Badge>
-                    AI Tips for Improvement
-                </h4>
-                <div className="p-4 bg-white dark:bg-gray-900 border border-yellow-200 dark:border-yellow-700 rounded-lg shadow-inner text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                    {result.suggestion}
-                </div>
-            </div>
+            {/* AI Tips */}
+<div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+  <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-200 flex items-center">
+    <Badge
+      variant="secondary"
+      className="mr-2 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+    >
+    </Badge>
+    AI Tips for Improvement
+  </h4>
+
+  <div className="p-5 bg-yellow-50 dark:bg-yellow-950/40 border border-yellow-300 dark:border-yellow-700 rounded-2xl shadow-md">
+    {/* wrapper div gets the prose classes (no typing issues) */}
+    <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none leading-relaxed">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {result.suggestion || "No suggestions generated."}
+      </ReactMarkdown>
+    </div>
+  </div>
+</div>
 
           </CardContent>
         </Card>

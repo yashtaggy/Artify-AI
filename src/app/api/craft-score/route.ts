@@ -89,18 +89,27 @@ Suggest ways to improve sustainability, reduce carbon footprint, and optimize pr
 
     const suggestion = response?.text || "No suggestions generated.";
 
+    // Clean up markdown-like formatting (*bold*, etc.)
+    const cleanedSuggestion = suggestion
+    .replace(/\*\*(.*?)\*\*/g, '$1')  // remove double asterisks **bold**
+    .replace(/\*(.*?)\*/g, '$1')      // remove single asterisks *italic*
+    .replace(/_/g, '')                // remove underscores if any
+    .trim();
+
+
     return NextResponse.json({
       suggestedPrice,
       negotiationRange,
       ecoScore,
       carbonFootprint,
       totalScore,
-      suggestion,
-    });
+      suggestion: cleanedSuggestion,
+    });    
   } catch (error) {
     // Log the detailed error from Cohere (which often has more info)
     console.error("Craft Score API Error (Cohere or Math failure):", error);
     // Return a generic 500 error for security and to allow the client to handle it.
+    
     return NextResponse.json({ error: "Internal Server Error during Craft Score calculation. Check server logs for Cohere API errors." }, { status: 500 });
   }
 }

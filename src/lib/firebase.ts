@@ -41,6 +41,7 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
 
+
 // --- SESSION PERSISTENCE AND AUTO LOGIN FIX ---
 const initialAuth = (async () => {
   try {

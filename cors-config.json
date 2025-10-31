@@ -1,0 +1,9 @@
+[
+    {
+      "origin": ["http://localhost:9002", "https://artify-ai-599463248805.asia-south1.run.app"],
+      "method": ["GET", "POST", "PUT", "HEAD", "DELETE"],
+      "responseHeader": ["Content-Type", "x-goog-meta-foo", "x-goog-acl", "Authorization"],
+      "maxAgeSeconds": 3600
+    }
+  ]
+  

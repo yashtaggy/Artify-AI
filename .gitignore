@@ -45,3 +45,6 @@ key/vertex-translation.json
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+vertex-translation.json
+*.key.json
