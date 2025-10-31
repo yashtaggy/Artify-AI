@@ -75,12 +75,12 @@ export default function AppTour({ manualStart = false }: AppTourProps) {
     {
       selector: '[data-tour-id="ad-creatives"]',
       content:
-        "🎨 The Ad Creatives tool transforms your ideas into ad copy in seconds. Perfect for quick campaign launches.",
+        "🎨 The Ad Creatives tool transforms your ideas into professional visuals and ad copy in seconds. Perfect for quick campaign launches.",
     },
     {
       selector: '[data-tour-id="library"]',
       content:
-        "📚 Your Library stores all your generated stories ready to reuse anytime.",
+        "📚 Your Library stores all your generated stories, ads, and ideas — organized, editable, and ready to reuse anytime.",
     },
   ];
 

@@ -43,6 +43,12 @@ export function Header() {
     setStartTour(true);
   };
 
+  const handleStartTour = () => {
+    // ✅ Reset tour flag and trigger it manually
+    localStorage.setItem("artifyaiTourSeen", "false");
+    setStartTour(true);
+  };
+
   return (
     <header className="relative flex items-center justify-between border-b bg-card px-4 sm:px-6 py-3 sm:py-4 shadow-sm h-16 sm:h-20">
   {/* Left (Mobile): Logo & Name inline */}
