@@ -1,21 +1,19 @@
+"use server"; // 🩵 Add this at the very top (ensures server-only execution)
+
 import { NextResponse } from "next/server";
 import { TranslationServiceClient } from "@google-cloud/translate";
 import { vertex } from "@/lib/vertex-server";
 
-// ✅ Initialize Google Cloud Translation client
+// ✅ Initialize Google Cloud Translation client (safe at top level)
 const translationClient = new TranslationServiceClient({
   keyFilename: "./key/vertex-translation.json",
 });
 
-// ✅ Define your project & location
-const projectId = "artifyai-891ba"; // <-- replace if different
+const projectId = "artifyai-891ba";
 const location = "global";
 
-const model = vertex.getGenerativeModel({ model: "gemini-1.5-flash" });
-const response = await model.generateContent("Hello world");
+// ✅ Remove top-level await here (move it inside the handler)
 
-
-// ✅ POST handler
 export async function POST(req: Request) {
   try {
     const { text, targetLanguage } = await req.json();
@@ -27,6 +25,7 @@ export async function POST(req: Request) {
       );
     }
 
+    // ✅ Perform translation
     const request = {
       parent: `projects/${projectId}/locations/${location}`,
       contents: [text],
@@ -34,12 +33,19 @@ export async function POST(req: Request) {
       targetLanguageCode: targetLanguage,
     };
 
-    // ✅ Perform translation
-    const [response] = await translationClient.translateText(request);
+    const [translationResponse] = await translationClient.translateText(request);
+    const translatedText = translationResponse.translations?.[0]?.translatedText || "";
 
-    const translatedText = response.translations?.[0]?.translatedText || "";
+    // ✅ Call Vertex AI model *only inside* handler
+    const model = vertex.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const aiResponse = await model.generateContent(
+      `Improve translation quality: ${translatedText}`
+    );
 
-    return NextResponse.json({ translatedText });
+    return NextResponse.json({
+      translatedText,
+      aiEnhancement: aiResponse.response?.candidates?.[0]?.content?.parts?.[0]?.text || "",
+    });
   } catch (error: any) {
     console.error("Translation API Error:", error);
     return NextResponse.json(

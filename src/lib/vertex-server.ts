@@ -1,4 +1,6 @@
 // src/lib/vertex-server.ts
+"use server";
+
 import { VertexAI } from "@google-cloud/vertexai";
 
 // Parse credentials only if available (in Cloud Run / env vars)
