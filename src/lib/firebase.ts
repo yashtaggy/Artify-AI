@@ -9,6 +9,7 @@ import {
   browserSessionPersistence,
 } from "firebase/auth";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+import { VertexAI } from "@google-cloud/vertexai";
 
 // --- FIREBASE CONFIG (YOUR PROJECT CONFIG) ---
 const firebaseConfig = {
@@ -59,6 +60,16 @@ const initialAuth = (async () => {
     console.error("Firebase Auth init failed:", error);
   }
 })();
+
+const credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
+  ? JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON)
+  : undefined;
+
+const vertex = new VertexAI({
+  project: "artifyai-891ba",
+  location: "asia-south1",
+  credentials,
+});
 
 // --- Export for use throughout the app ---
 export { db, storage, auth, initialAuth };
