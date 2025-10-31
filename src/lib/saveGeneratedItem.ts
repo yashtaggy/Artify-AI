@@ -1,57 +1,35 @@
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { ref, uploadString, getDownloadURL } from "firebase/storage";
 
+/**
+ * Saves a generated story (or other AI output) to Firestore
+ * for the authenticated user.
+ */
 export const saveGeneratedItem = async (
   userId: string,
   type: "story" | "trend" | "ad",
   content: {
     title?: string;
-    imageUrl?: string;
+    imageUrl?: string; // Direct image URL only
     short?: string;
     long?: string;
   }
 ) => {
-  console.log("⚙️ saveGeneratedItem called with:", { userId, type, content });
+  console.log("💾 Saving generated item:", { userId, type, content });
 
-  if (!userId) {
-    console.error("❌ No userId provided. Cannot save generated item.");
-    return;
-  }
+  if (!userId) throw new Error("User ID missing — cannot save story.");
 
   try {
-    let finalImageUrl = content.imageUrl || "";
-    console.log("📷 Checking image URL...");
-
-    // Upload base64 image to Firebase Storage
-    if (finalImageUrl.startsWith("data:image")) {
-      console.log("📤 Uploading image to storage...");
-      const imageRef = ref(storage, `users/${userId}/${Date.now()}.png`);
-      await uploadString(imageRef, finalImageUrl, "data_url");
-      finalImageUrl = await getDownloadURL(imageRef);
-      console.log("✅ Image uploaded successfully:", finalImageUrl);
-    } else {
-      console.log("ℹ️ No base64 image detected, skipping upload.");
-    }
-
     const userCollection = collection(db, "users", userId, "savedItems");
-    console.log("🧾 Adding document to Firestore...");
-
     await addDoc(userCollection, {
       type,
-      content: {
-        imageUrl: finalImageUrl,
-        short: content.short || "",
-        long: content.long || "",
-      },
-      meta: {
-        title: content.title || "Untitled Story",
-      },
+      content,
       createdAt: serverTimestamp(),
     });
 
-    console.log("✅ Story saved successfully!");
+    console.log("✅ Story saved successfully in Firestore!");
   } catch (error) {
-    console.error("❌ Error saving generated item:", error);
+    console.error("❌ Firestore save error:", error);
+    throw error;
   }
 };

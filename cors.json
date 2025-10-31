@@ -1,6 +1,6 @@
 [
     {
-      "origin": ["http://localhost:9002", "https://artify-ai-599463248805.asia-south1.run.app"],
+      "origin": ["http://localhost:9002", "https://artify-ai-599463248805.asia-south1.run.app", "https://artifyai-891ba.web.app", "https://artifyai-891ba.firebaseapp.com"],
       "method": ["GET", "POST", "PUT", "HEAD", "DELETE"],
       "responseHeader": ["Content-Type", "x-goog-meta-foo", "x-goog-acl", "Authorization"],
       "maxAgeSeconds": 3600

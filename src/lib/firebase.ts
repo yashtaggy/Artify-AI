@@ -27,26 +27,18 @@ const initialAuthToken = (globalThis as any)?.__initial_auth_token ?? null;
 // --- Initialize Firebase only once ---
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// ✅ --- Initialize App Check with reCAPTCHA v3 ---
-if (typeof window !== "undefined") {
-  const appCheck = initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider("6Ldj7vsrAAAAAA5V7C5SrXR_fSVQhr3z6q4V80nQ"), // 🔹 Replace with your actual site key
-    isTokenAutoRefreshEnabled: true, // Keeps App Check token fresh
-  });
-  console.log("✅ Firebase App Check initialized");
-}
-
 // --- Initialize Firestore, Storage, and Auth ---
 const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
 
-
 // --- SESSION PERSISTENCE AND AUTO LOGIN FIX ---
 const initialAuth = (async () => {
   try {
     // Keep the auth session alive in the same browser session
-    await setPersistence(auth, browserSessionPersistence);
+    setPersistence(auth, browserSessionPersistence).catch((err) =>
+    console.error("⚠️ Auth persistence failed:", err)
+    );
 
     if (initialAuthToken) {
       // Use secure custom token if available
@@ -59,11 +51,5 @@ const initialAuth = (async () => {
     console.error("Firebase Auth init failed:", error);
   }
 })();
-
-const credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
-  ? JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON)
-  : undefined;
-
-
 // --- Export for use throughout the app ---
 export { db, storage, auth, initialAuth };

@@ -10,6 +10,8 @@ import * as htmlToImage from 'html-to-image'; // 🔥 Added for download feature
 import type { StoryGenerationState } from '@/app/actions';
 import { handleGenerateStory } from '@/app/actions';
 import { StoryGeneratorSchema } from '@/lib/schemas';
+import { useFirebaseUser } from "@/lib/useFirebaseUser";
+import { auth } from "@/lib/firebase";
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';    
 import {
@@ -76,10 +78,12 @@ export function StoryGenerator() {
   const [isTranslating, setIsTranslating] = useState(false);
 
   const [story, setStory] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [setLoading] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [paused, setPaused] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { user, loading } = useFirebaseUser();
+
   
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -127,59 +131,50 @@ export function StoryGenerator() {
   };
 
   // 🔥 Save Story Function
+  
   const handleSaveStory = async () => {
     try {
-      const storedUser = localStorage.getItem('currentUser');
-      if (!storedUser) {
+      if (loading) {
         toast({
-          title: 'Login Required',
-          description: 'Please log in to save your story.',
+          title: "Please wait...",
+          description: "Checking login status.",
         });
         return;
       }
-
-      const user = JSON.parse(storedUser);
-      const result = state.result;
-
-      if (!result) {
+      
+      if (!user) {
         toast({
-          title: 'No Story to Save',
-          description: 'Generate a story first before saving.',
+          title: "Login Required",
+          description: "Please log in to save your story.",
+          variant: "destructive",
         });
         return;
       }
-
-      const title = form.getValues('productName') || 'Untitled Story';
-      const imageUrl = imagePreview || result.productImageUri || '';
-      const short = result.productDescriptionShort || '';
-      const long = result.productDescriptionLong || '';
-
-      console.log("🧩 Saving story with:", {
-        user: user.uid || user.id,
-        title,
-        imageUrlLength: imageUrl?.length,
-        shortLength: short?.length,
-        longLength: long?.length,
-      });      
-      console.log("🟡 Attempting to save story...");
-      await saveGeneratedItem(user.uid || user.id, 'story', {
-        title,
-        imageUrl,
-        short,
-        long,
+  
+      if (!state.result) {
+        toast({
+          title: "No Story to Save",
+          description: "Please generate a story first.",
+        });
+        return;
+      }
+  
+      await saveGeneratedItem(user.uid, "story", {
+        title: form.getValues("productName") || "Untitled Story",
+        imageUrl: state.result.productImageUri || "",
+        short: state.result.productDescriptionShort || "",
+        long: state.result.productDescriptionLong || "",
       });
-      console.log("🟢 Story save function completed.");
-
+  
       toast({
-        title: 'Saved Successfully!',
-        description: 'Your story has been saved to your library.',
+        title: "Saved Successfully!",
+        description: "Your story has been added to your library.",
       });
     } catch (error) {
-      console.error(error);
       toast({
-        title: 'Error',
-        description: 'Something went wrong while saving your story.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to save story. Try again.",
+        variant: "destructive",
       });
     }
   };
@@ -444,22 +439,7 @@ const handlePauseResume = () => {
                     <div className="font-body text-foreground/90 whitespace-pre-wrap">
                       {/* 🎧 Listen Button */}
                       <div className="mt-3 flex gap-3">
-                      <Button
-                        onClick={handleListen}
-                        disabled={playing && !paused}
-                        className="bg-primary text-white hover:bg-primary/90 flex items-center gap-2"
-                      >
-                        {playing && !paused ? "🔊 Playing..." : "▶️ Listen"}
-                      </Button>
-                              
-                      {playing && (
-                        <Button
-                          onClick={handlePauseResume}
-                          className="bg-secondary text-black hover:bg-secondary/90 flex items-center gap-2"
-                        >
-                          {paused ? "⏯ Resume" : "⏸ Pause"}
-                        </Button>
-                      )}
+                      
                     </div>
                       
                       {state.result.productDescriptionLong}
@@ -474,49 +454,13 @@ const handlePauseResume = () => {
                       {state.result.socialMediaPost}
                     </p>
                   </div>
-                  {/* 🌍 Translation Section */}
-                <Separator />
-                <div>
-                  <h3 className="font-semibold text-lg mb-2 text-primary">Translate Story</h3>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <select
-                      value={targetLanguage}
-                      onChange={(e) => setTargetLanguage(e.target.value)}
-                      className="border border-gray-300 rounded-md p-2 w-full sm:w-1/2"
-                    >
-                      <option value="fr">French 🇫🇷</option>
-                      <option value="es">Spanish 🇪🇸</option>
-                      <option value="de">German 🇩🇪</option>
-                      <option value="hi">Hindi 🇮🇳</option>
-                      <option value="ja">Japanese 🇯🇵</option>
-                    </select>
-                    <Button
-                      onClick={handleTranslateStory}
-                      disabled={isTranslating}
-                      className="bg-primary text-white hover:bg-primary/90"
-                    >
-                      {isTranslating ? "Translating..." : "Translate"}
-                    </Button>
-                  </div>
-                          
-                  {translatedText && (
-                    <div className="mt-4 p-3 border rounded-md bg-muted/50">
-                      <h4 className="font-semibold mb-2">Translated Story:</h4>
-                      <p className="whitespace-pre-wrap">{translatedText}</p>
-                    </div>
-                  )}
-                </div>
-
                 </CardContent>
 
                 {/* Save Story Button */}
                 <CardFooter className="flex justify-end">
-                  <Button
-                    onClick={handleSaveStory}
-                    className="bg-primary text-white hover:bg-primary/90"
-                  >
-                    <Save className="mr-2 h-4 w-4" /> Save Story
-                  </Button>
+                <Button onClick={handleSaveStory} className="bg-amber-700 hover:bg-amber-800 text-white">
+                  Save Story
+                </Button>
                 </CardFooter>
               </Card>
 
