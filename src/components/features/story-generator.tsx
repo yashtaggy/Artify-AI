@@ -10,10 +10,8 @@ import * as htmlToImage from 'html-to-image'; // 🔥 Added for download feature
 import type { StoryGenerationState } from '@/app/actions';
 import { handleGenerateStory } from '@/app/actions';
 import { StoryGeneratorSchema } from '@/lib/schemas';
-import { useFirebaseUser } from "@/lib/useFirebaseUser";
-import { auth } from "@/lib/firebase";
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Button } from '@/components/ui/button';    
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -72,20 +70,6 @@ export function StoryGenerator() {
     PlaceHolderImages[0]?.imageUrl || null
   );
   const [imageBase64, setImageBase64] = useState<string | undefined>(undefined);
-  // 🔠 Translation Feature States
-  const [targetLanguage, setTargetLanguage] = useState("fr"); // Default: French
-  const [translatedText, setTranslatedText] = useState<string | null>(null);
-  const [isTranslating, setIsTranslating] = useState(false);
-
-  const [story, setStory] = useState("");
-  const [setLoading] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { user, loading } = useFirebaseUser();
-
-  
-
   const formRef = useRef<HTMLFormElement>(null);
   const cardRef = useRef<HTMLDivElement>(null); // 🔥 Added ref for Provenance Card
 
@@ -131,50 +115,50 @@ export function StoryGenerator() {
   };
 
   // 🔥 Save Story Function
-  
   const handleSaveStory = async () => {
     try {
-      if (loading) {
+      const storedUser = localStorage.getItem('currentUser');
+      if (!storedUser) {
         toast({
-          title: "Please wait...",
-          description: "Checking login status.",
+          title: 'Login Required',
+          description: 'Please log in to save your story.',
         });
         return;
       }
-      
-      if (!user) {
+
+      const user = JSON.parse(storedUser);
+      const result = state.result;
+
+      if (!result) {
         toast({
-          title: "Login Required",
-          description: "Please log in to save your story.",
-          variant: "destructive",
+          title: 'No Story to Save',
+          description: 'Generate a story first before saving.',
         });
         return;
       }
-  
-      if (!state.result) {
-        toast({
-          title: "No Story to Save",
-          description: "Please generate a story first.",
-        });
-        return;
-      }
-  
-      await saveGeneratedItem(user.uid, "story", {
-        title: form.getValues("productName") || "Untitled Story",
-        imageUrl: state.result.productImageUri || "",
-        short: state.result.productDescriptionShort || "",
-        long: state.result.productDescriptionLong || "",
+
+      const title = form.getValues('productName') || 'Untitled Story';
+      const imageUrl = imagePreview || result.productImageUri || '';
+      const short = result.productDescriptionShort || '';
+      const long = result.productDescriptionLong || '';
+
+      await saveGeneratedItem(user.uid || user.id, 'story', {
+        title,
+        imageUrl,
+        short,
+        long,
       });
-  
+
       toast({
-        title: "Saved Successfully!",
-        description: "Your story has been added to your library.",
+        title: 'Saved Successfully!',
+        description: 'Your story has been saved to your library.',
       });
     } catch (error) {
+      console.error(error);
       toast({
-        title: "Error",
-        description: "Failed to save story. Try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Something went wrong while saving your story.',
+        variant: 'destructive',
       });
     }
   };
@@ -197,101 +181,6 @@ export function StoryGenerator() {
       });
     }
   };
-
-  // 🔥 Translate Story Function using Vertex AI Translation API
-const handleTranslateStory = async () => {
-  if (!state.result?.productDescriptionLong) return;
-
-  setIsTranslating(true);
-  setTranslatedText(null);
-
-  try {
-    const response = await fetch("/api/translate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text: state.result.productDescriptionLong,
-        targetLanguage,
-      }),
-    });
-
-    if (!response.ok) throw new Error("Translation failed");
-
-    const data = await response.json();
-    setTranslatedText(data.translatedText);
-  } catch (error) {
-    console.error(error);
-    toast({
-      title: "Translation Failed",
-      description: "Please try again later.",
-      variant: "destructive",
-    });
-  } finally {
-    setIsTranslating(false);
-  }
-};
-
-// 🎧 Text-to-Speech Function for English Story
-const handleListen = async () => {
-  if (!state.result?.productDescriptionLong) return;
-
-  try {
-    // If audio already exists, play it again
-    if (audioRef.current) {
-      audioRef.current.play();
-      setPlaying(true);
-      setPaused(false);
-      return;
-    }
-
-    setPlaying(true);
-    const response = await fetch("/api/speech", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text: state.result.productDescriptionLong,
-        languageCode: "en-US",
-      }),
-    });
-
-    const data = await response.json();
-    if (data.audioBase64) {
-      const audio = new Audio("data:audio/mp3;base64," + data.audioBase64);
-      audioRef.current = audio;
-
-      audio.play();
-      audio.onended = () => {
-        setPlaying(false);
-        setPaused(false);
-        audioRef.current = null;
-      };
-    } else {
-      throw new Error("Audio not received");
-    }
-  } catch (error) {
-    console.error("Speech error:", error);
-    toast({
-      title: "Playback Error",
-      description: "Could not generate audio. Please try again.",
-      variant: "destructive",
-    });
-    setPlaying(false);
-  }
-};
-
-// ⏸️ Pause/Resume Handler
-const handlePauseResume = () => {
-  const audio = audioRef.current;
-  if (!audio) return;
-
-  if (paused) {
-    audio.play();
-    setPaused(false);
-  } else {
-    audio.pause();
-    setPaused(true);
-  }
-};
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -436,14 +325,9 @@ const handlePauseResume = () => {
                     <h3 className="font-semibold text-lg mb-2 text-primary">
                       Detailed Description
                     </h3>
-                    <div className="font-body text-foreground/90 whitespace-pre-wrap">
-                      {/* 🎧 Listen Button */}
-                      <div className="mt-3 flex gap-3">
-                      
-                    </div>
-                      
+                    <p className="font-body text-foreground/90 whitespace-pre-wrap">
                       {state.result.productDescriptionLong}
-                    </div>
+                    </p>
                   </div>
                   <Separator />
                   <div>
@@ -458,9 +342,12 @@ const handlePauseResume = () => {
 
                 {/* Save Story Button */}
                 <CardFooter className="flex justify-end">
-                <Button onClick={handleSaveStory} className="bg-amber-700 hover:bg-amber-800 text-white">
-                  Save Story
-                </Button>
+                  <Button
+                    onClick={handleSaveStory}
+                    className="bg-primary text-white hover:bg-primary/90"
+                  >
+                    <Save className="mr-2 h-4 w-4" /> Save Story
+                  </Button>
                 </CardFooter>
               </Card>
 

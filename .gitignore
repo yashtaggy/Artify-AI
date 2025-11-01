@@ -40,11 +40,7 @@ next-env.d.ts
 .genkit/*
 .env.local
 
-key/vertex-translation.json
-
 # firebase
 firebase-debug.log
 firestore-debug.log
 
-vertex-translation.json
-*.key.json

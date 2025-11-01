@@ -8,7 +8,6 @@ import {
   setPersistence,
   browserSessionPersistence,
 } from "firebase/auth";
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 // --- FIREBASE CONFIG (YOUR PROJECT CONFIG) ---
 const firebaseConfig = {
@@ -36,9 +35,7 @@ const auth = getAuth(app);
 const initialAuth = (async () => {
   try {
     // Keep the auth session alive in the same browser session
-    setPersistence(auth, browserSessionPersistence).catch((err) =>
-    console.error("⚠️ Auth persistence failed:", err)
-    );
+    await setPersistence(auth, browserSessionPersistence);
 
     if (initialAuthToken) {
       // Use secure custom token if available
@@ -51,5 +48,6 @@ const initialAuth = (async () => {
     console.error("Firebase Auth init failed:", error);
   }
 })();
+
 // --- Export for use throughout the app ---
 export { db, storage, auth, initialAuth };
