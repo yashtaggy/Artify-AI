@@ -27,10 +27,23 @@ export const saveGeneratedItem = async (
   try {
     const userCollection = collection(db, "users", userId, "savedItems");
 
+    // ✅ Handle image URL safely
+    let safeImageUrl = "";
+    if (content.imageUrl) {
+      safeImageUrl =
+        content.imageUrl.length < 500
+          ? content.imageUrl
+          : "https://picsum.photos/seed/artify-default/600/400";
+    } else {
+      safeImageUrl = "https://picsum.photos/seed/artify-default/600/400";
+    }
+
+    // ✅ Match Firestore structure expected by dashboard
     await addDoc(userCollection, {
       type,
       content: {
-        imageUrl: content.imageUrl || "",
+        title: content.title || "Untitled Story",
+        imageUrl: safeImageUrl,
         short: content.short || "",
         long: content.long || "",
       },

@@ -11,6 +11,7 @@ import type { StoryGenerationState } from '@/app/actions';
 import { handleGenerateStory } from '@/app/actions';
 import { StoryGeneratorSchema } from '@/lib/schemas';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { uploadImage } from "@/lib/uploadImage";
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -117,51 +118,78 @@ export function StoryGenerator() {
   // 🔥 Save Story Function
   const handleSaveStory = async () => {
     try {
-      const storedUser = localStorage.getItem('currentUser');
+      const storedUser = localStorage.getItem("currentUser");
       if (!storedUser) {
         toast({
-          title: 'Login Required',
-          description: 'Please log in to save your story.',
+          title: "Login Required",
+          description: "Please log in to save your story.",
         });
         return;
       }
-
+  
       const user = JSON.parse(storedUser);
       const result = state.result;
-
+  
       if (!result) {
         toast({
-          title: 'No Story to Save',
-          description: 'Generate a story first before saving.',
+          title: "No Story to Save",
+          description: "Generate a story first before saving.",
         });
         return;
       }
-
-      const title = form.getValues('productName') || 'Untitled Story';
-      const imageUrl = imagePreview || result.productImageUri || '';
-      const short = result.productDescriptionShort || '';
-      const long = result.productDescriptionLong || '';
-
-      await saveGeneratedItem(user.uid || user.id, 'story', {
+  
+      // ✅ Extract main story text safely
+      const storyText =
+        typeof result === "string"
+          ? result
+          : result?.story ||
+            result?.long ||
+            result?.productDescriptionLong ||
+            result?.description ||
+            JSON.stringify(result, null, 2);
+  
+      // ✅ Title (fallback if missing)
+      const title =
+        form.getValues("productName") ||
+        result?.title ||
+        "Untitled Story";
+  
+      // ✅ Choose image URL only if it's an actual link (not base64 or blob)
+      let imageUrl = "";
+      if (result?.productImageUri?.startsWith("http")) {
+        imageUrl = result.productImageUri;
+      } else if (result?.imageUrl?.startsWith("http")) {
+        imageUrl = result.imageUrl;
+      } else if (imagePreview?.startsWith("http")) {
+        imageUrl = imagePreview;
+      } else {
+        // fallback placeholder (to avoid base64/blob)
+        imageUrl = `https://picsum.photos/seed/${encodeURIComponent(title)}/600/400`;
+      }
+  
+      console.log("🧩 Story being saved:", { title, imageUrl, storyText });
+  
+      // ✅ Save to Firestore
+      await saveGeneratedItem(user.uid || user.id, "story", {
         title,
         imageUrl,
-        short,
-        long,
+        long: storyText,
       });
-
+  
       toast({
-        title: 'Saved Successfully!',
-        description: 'Your story has been saved to your library.',
+        title: "Saved Successfully!",
+        description: "Your story has been saved to your library.",
       });
     } catch (error) {
       console.error(error);
       toast({
-        title: 'Error',
-        description: 'Something went wrong while saving your story.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Something went wrong while saving your story.",
+        variant: "destructive",
       });
     }
-  };
+  };  
+  
 
   // 🔥 Download Provenance Card as Image
   const handleDownloadCard = async () => {

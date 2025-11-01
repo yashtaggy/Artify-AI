@@ -20,7 +20,7 @@ import {
   PenTool,
 } from "lucide-react";
 import { db } from "@/lib/firebase";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Dialog,
@@ -51,32 +51,38 @@ export default function Home() {
     }
   }, [router]);
 
-  const fetchSavedStories = async (userId: string) => {
-    setLoadingStories(true);
-    try {
-      const savedItemsRef = collection(db, "users", userId, "savedItems");
-      const q = query(
-        savedItemsRef,
-        where("type", "==", "story"),
-        orderBy("createdAt", "desc")
-      );
-      const snapshot = await getDocs(q);
-      const stories: any[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setSavedStories(stories);
-    } catch (err) {
-      console.error("Error fetching saved stories:", err);
-    } finally {
-      setLoadingStories(false);
-    }
-  };
-
   useEffect(() => {
-    if (user?.uid || user?.id) {
-      fetchSavedStories(user.uid || user.id);
-    }
+    if (!user?.uid && !user?.id) return;
+  
+    const userId = user.uid || user.id;
+    const savedItemsRef = collection(db, "users", userId, "savedItems");
+    const q = query(
+      savedItemsRef,
+      where("type", "==", "story"),
+      orderBy("createdAt", "desc")
+    );
+  
+    setLoadingStories(true);
+  
+    // 👇 Listen to Firestore in real time
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const stories = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setSavedStories(stories);
+        setLoadingStories(false);
+      },
+      (error) => {
+        console.error("Error listening for saved stories:", error);
+        setLoadingStories(false);
+      }
+    );
+  
+    // Cleanup on unmount
+    return () => unsubscribe();
   }, [user]);
 
   if (loading) return null;
