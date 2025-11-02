@@ -235,6 +235,7 @@ It’s a game-changer for **artisan digital inclusion and sustainable growth.**
 
 🔗 **Live Project:** [Artify AI Platform](http://artifyai-599463248805.asia-south1.run.app)  
 📧 **Email:** [info.artifyai@gmail.com](mailto:info.artifyai@gmail.com)
+🔗 **Demo Video Link:** https://drive.google.com/file/d/1k7V_q62mQj8T4yEJSMXYUrkUNxbqVnsc/view
 
 ---
 
