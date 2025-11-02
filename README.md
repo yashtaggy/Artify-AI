@@ -1,6 +1,4 @@
-Absolutely, Tanmay 👍 — here’s your **updated, polished, and presentation-ready GitHub project document (README.md)** for **Artify AI**, formatted in perfect Markdown style for GitHub.
 
-It refines your text for clarity, grammar, and professional tone while keeping every technical and creative detail intact.
 
 ---
 
