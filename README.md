@@ -25,7 +25,7 @@ It leverages **Generative AI, Data Analytics, and Sustainability Insights** to h
 
 🧠 **Tech Used:** Built using **Next.js**, **Firebase**, **Cohere AI**, and **Gemini AI (Flash 2.5)** — with a modern, secure, and responsive UI.
 
-🧠 **Live Project:** https://artifyai-2025.blogspot.com/2025/10/artify-ai-doc.html
+🧠 **Blog** https://artifyai-2025.blogspot.com/2025/10/artify-ai-doc.html
 ---
 
 ## ⚙️ Architecture Overview
