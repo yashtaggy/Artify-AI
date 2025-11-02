@@ -1,3 +1,9 @@
+Absolutely, Tanmay 👍 — here’s your **updated, polished, and presentation-ready GitHub project document (README.md)** for **Artify AI**, formatted in perfect Markdown style for GitHub.
+
+It refines your text for clarity, grammar, and professional tone while keeping every technical and creative detail intact.
+
+---
+
 # 🎨 Artify AI — AI-Powered Marketplace Assistant for Local Artisans
 
 **Empowering Traditional Craftsmanship through Generative AI and Data Intelligence**
@@ -6,237 +12,258 @@
 
 ## 🧩 Problem Statement
 
-Local artisans often face challenges in marketing their crafts, sharing their authentic stories, and reaching wider digital audiences.  
-They lack access to data-driven insights, storytelling tools, and marketing resources that larger brands have — making it difficult to scale their craft sustainably.
+Local artisans face challenges in marketing their crafts, telling their authentic stories, and reaching wider digital audiences.
+They often lack access to **data-driven insights, storytelling tools, and marketing resources** — making it difficult to scale their craft sustainably.
 
-**Challenge:**  
-Create an AI-driven platform that helps local artisans market their craft, tell their stories, and expand their reach to digital audiences.
+**Challenge:**
+Build an **AI-driven platform** that helps local artisans **market their craft, share authentic stories, and expand their reach** through digital innovation.
 
 ---
 
 ## 🚀 Proposed Solution — Our Platform
 
-**Artify AI** is an AI-Powered Marketplace Assistant designed specifically for local artisans.  
-It leverages **Generative AI, Data Analytics, and Sustainability Insights** to help artisans:
+**Artify AI** is an **AI-Powered Marketplace Assistant** built for local artisans.
+It integrates **Generative AI**, **Data Analytics**, and **Sustainability Intelligence** to help artisans:
 
-- Showcase creativity through storytelling  
-- Understand real market demand  
-- Expand their global digital presence  
+* Showcase creativity through AI-generated storytelling
+* Understand real market demand and trends
+* Expand their digital presence globally
 
-🧠 **Tech Used:** Built using **Next.js**, **Firebase**, **Cohere AI**, and **Gemini AI (Flash 2.5)** — with a modern, secure, and responsive UI.
+🧠 **Tech Stack Highlights:** Built using **Next.js**, **Firebase**, **Cohere AI**, and **Gemini Flash 2.5** — offering a secure, fast, and modern user experience.
 
-🧠 **Blog** https://artifyai-2025.blogspot.com/2025/10/artify-ai-doc.html
+📝 **Detailed Blog:** [Artify AI Documentation](https://artifyai-2025.blogspot.com/2025/10/artify-ai-doc.html)
+
 ---
 
 ## ⚙️ Architecture Overview
 
-### **Main Components**
+### **Core Components**
 
-| Layer | Tools / Frameworks |
-|-------|--------------------|
-| **Frontend** | Next.js (React Framework), Tailwind CSS |
-| **Backend & DB** | Firebase Firestore, Firebase Authentication |
-| **AI Models** | Gemini Flash 2.5, Cohere Command R+ 03-2025 |
-| **Visualization** | Chart.js, D3.js |
-| **Storage** | Firebase Cloud Storage |
-| **Security** | Firebase Auth (OTP/Email Verification) |
-| **Deployment** | Firebase Hosting / Vercel |
-| **Environment Management** | `.env` for secure API key storage |
+| Layer                  | Tools / Frameworks                            |
+| ---------------------- | --------------------------------------------- |
+| **Frontend**           | Next.js (React Framework), Tailwind CSS       |
+| **Backend & Database** | Firebase Firestore, Firebase Authentication   |
+| **AI Models**          | Gemini Flash 2.5, Cohere Command R+ (03-2025) |
+| **Visualization**      | Chart.js, D3.js                               |
+| **Storage**            | Firebase Cloud Storage                        |
+| **Security**           | Firebase Auth (OTP/Email Verification)        |
+| **Deployment**         | Firebase Hosting / Vercel                     |
+| **Environment**        | `.env` for secure API key storage             |
 
 ---
 
 ## 🧠 How It Works — Architecture Flow
 
 1. **User Interaction**
-   - User logs in via Firebase Authentication.
-   - Dashboard modules: Story Generator, Trend Finder, Craft Score, Market Demand, Ad Creatives, My Library.
+
+   * Users log in securely via Firebase Authentication.
+   * Access modules such as Story Generator, Trend Finder, Craft Score, Market Demand, Ad Creatives, and My Library.
 
 2. **AI Processing**
-   - Gemini AI generates stories + provenance cards.
-   - Cohere AI calculates craft scores, trends, and demand insights.
-   - Sustainability and cost optimization via mathematical engine.
+
+   * **Gemini AI** generates creative product stories and provenance cards.
+   * **Cohere AI** computes craft scores, sustainability analysis, and trend insights.
+   * A custom mathematical engine provides cost optimization and eco-sustainability metrics.
 
 3. **Data Storage**
-   - All data (stories, provenance, analytics) stored in Firebase Firestore.
+
+   * All generated data (stories, provenance, analytics) is securely stored in Firebase Firestore.
 
 4. **Visualization**
-   - Market trends, graphs, and analytics displayed using Chart.js / D3.js.
+
+   * Real-time charts and insights displayed using **Chart.js** and **D3.js**.
 
 ---
 
 ## 🌟 Key Features
 
 ### 1️⃣ Story Generator (Gemini Flash 2.5)
-- Upload product image & description.  
-- Generates authentic storytelling content.  
-- Produces a **Provenance Card** (digital certificate).  
-- Builds emotional buyer connection.  
+
+* Upload artwork image and basic description.
+* Generates authentic AI-powered storytelling content.
+* Produces a **Provenance Card** — a digital certificate showcasing cultural context.
+* Builds emotional buyer connection.
 
 **Example Output:**
-> “Handwoven with patience and love, this silk stole reflects the artistry of the weaver’s 20-year tradition from Pune.”
+
+> “Handwoven with patience and love, this silk stole embodies 20 years of Pune’s weaving tradition.”
 
 ---
 
 ### 2️⃣ Trend Finder
-- Extracts trending **keywords, hashtags, and SEO topics**.  
-- Predicts best-performing content styles.  
-- Suggests optimal social media tags for visibility.
+
+* Extracts trending **keywords, hashtags, and SEO insights**.
+* Predicts best-performing styles and content formats.
+* Suggests social media tags to boost artisan visibility.
 
 ---
 
-### 3️⃣ Craft Score (Cohere Command-03-2025)
-- Inputs: cost, materials, time, and energy.  
-- Outputs:
-  - Optimized Cost
-  - Negotiated Price Range
-  - Sustainability Score
-  - Improvement Tips
+### 3️⃣ Craft Score (Cohere Command R+)
 
-**Example:**
-> “Your product is 87% sustainable. Switching to natural dye and solar drying can raise it to 95%.”
+* Inputs: material cost, crafting time, and energy use.
+* Outputs:
+
+  * Optimized Cost
+  * Price Range Suggestion
+  * Sustainability Score
+  * Improvement Recommendations
+
+**Example Output:**
+
+> “Your craft scores 87% sustainability. Switching to natural dyes and solar drying can raise it to 95%.”
 
 ---
 
 ### 4️⃣ Market Demand Analysis
-- Predicts 10-year market trends and 5-year demand forecasts.  
-- Identifies top competitor regions and growth potential.  
-- Validates input (no fake analyses for invalid products).  
-- Exports results as downloadable report.
+
+* Predicts **10-year market trends** and **5-year product demand**.
+* Highlights competitor regions and growth potential.
+* Filters out invalid inputs — no fake or irrelevant analyses.
+* Exports results as downloadable reports.
 
 ---
 
 ### 5️⃣ Ad Creatives Generator
-- Generates marketing content for:
-  - YouTube  
-  - Instagram  
-  - Facebook  
-  - Etsy  
-- Suggests Sora AI video scenes.
 
-**Example:**
-> “Scene 1: Close-up of hands shaping clay.  
-> Scene 2: Kiln fire glowing.  
-> Scene 3: ‘Handcrafted with Heritage.’”
+* Creates marketing content for:
+
+  * YouTube
+  * Instagram
+  * Facebook
+  * Etsy
+* Suggests **Sora AI** video scenes for storytelling.
+
+**Example Output:**
+
+> “Scene 1: Hands shaping clay.
+> Scene 2: Kiln glowing softly.
+> Scene 3: Text overlay — ‘Handcrafted with Heritage.’”
 
 ---
 
 ### 6️⃣ My Library
-- Saves all generated stories, cards, and ad creatives.  
-- Acts as a personal archive for artisans.
+
+* Saves all AI-generated content — stories, cards, creatives.
+* Acts as a personal digital archive for artisans.
 
 ---
 
 ## 🔒 Security & Authentication
 
-- **Firebase Authentication** (Email/Password + OAuth)
-- Secure **Firestore rules** for data protection  
-- **Encrypted storage** for user content  
-- Theme options: light, dark, and default  
+* **Firebase Authentication:** Email, Password, and OAuth support
+* **Firestore Security Rules:** Restricts unauthorized access
+* **Encrypted Storage:** Protects user-generated data
+* **UI Themes:** Light, Dark, and Default modes for accessibility
 
 ---
 
-## 🧰 Tech Stack
+## 🧰 Tech Stack Summary
 
-| Category | Tools / Frameworks Used |
-|-----------|------------------------|
-| Frontend | Next.js, Tailwind CSS |
-| Backend | Firebase Cloud Firestore |
-| Authentication | Firebase Auth |
-| AI Models | Gemini Flash 2.5, Cohere Command-03-2025 |
-| Visualization | Chart.js, D3.js |
-| Deployment | Firebase Hosting / Vercel |
-| Storage | Firebase Storage |
-| Environment | `.env` for API keys |
-| Version Control | Git & GitHub |
+| Category                   | Tools / Frameworks Used                       |
+| -------------------------- | --------------------------------------------- |
+| **Frontend**               | Next.js, Tailwind CSS                         |
+| **Backend**                | Firebase Cloud Firestore                      |
+| **Authentication**         | Firebase Auth                                 |
+| **AI Models**              | Gemini Flash 2.5, Cohere Command R+ (03-2025) |
+| **Visualization**          | Chart.js, D3.js                               |
+| **Deployment**             | Firebase Hosting / Vercel                     |
+| **Storage**                | Firebase Cloud Storage                        |
+| **Environment Management** | `.env` for secure API keys                    |
+| **Version Control**        | Git & GitHub                                  |
 
 ---
 
 ## 📈 Innovation Highlights
 
-✅ **All-in-One AI Toolkit** – Storytelling + Trends + Sustainability + Analytics  
-🤖 **Cross-AI Integration** – Gemini + Cohere working in sync  
-🧩 **Smart Validation** – Avoids fake/irrelevant analyses  
-🌱 **Sustainability-Centric Design**  
-🎨 **Artisan-Friendly UI** – Multilingual and intuitive
+✅ **All-in-One AI Toolkit:** Storytelling, Trends, Sustainability & Analytics
+🤖 **Cross-AI Integration:** Gemini + Cohere for hybrid intelligence
+🧩 **Smart Validation:** Filters invalid or unrelated inputs
+🌱 **Eco-Centric Approach:** Promotes sustainable art practices
+🎨 **User-Centric Design:** Multilingual and intuitive UI
 
 ---
 
 ## 🧮 Sustainability Formula (Simplified)
 
-\[
+[
 \text{Sustainability Score} = \frac{(M + T + E)}{C} \times 100
-\]
+]
 
-Where:  
-- **M** = Material Eco-Factor  
-- **T** = Time Efficiency  
-- **E** = Energy Source Efficiency  
-- **C** = Product Cost Factor  
+Where:
 
-*Weights are dynamically adjusted using AI insights.*
+* **M** = Material Eco-Factor
+* **T** = Time Efficiency
+* **E** = Energy Source Efficiency
+* **C** = Product Cost Factor
+
+*AI dynamically adjusts weights for personalized sustainability evaluation.*
 
 ---
 
 ## 🧩 Example Use Case
 
-**Artisan:** Meera, Handloom Weaver from Pune  
+**Artisan:** Meera, Handloom Weaver (Pune, India)
 
-1. Uploads photo & product details  
-2. Generates emotional story + provenance card  
-3. Trend Finder suggests hashtags:  
-   `#HandloomHeritage #EcoSilk #MadeInIndia`  
-4. Craft Score: 82% → Suggests solar drying to improve  
-5. Market Demand: High in EU & US  
-6. Ad Creative: Creates Instagram captions & Sora scenes  
-7. Story saved to “My Library” for reuse
+1. Uploads product photo and description.
+2. Generates AI-based story and provenance card.
+3. Trend Finder suggests hashtags:
+   `#HandloomHeritage #EcoSilk #MadeInIndia`
+4. Craft Score: 82% → Suggests solar drying for improvement.
+5. Market Demand: High in EU & US regions.
+6. Ad Creative: Generates Instagram captions and Sora video script.
+7. All outputs saved in “My Library” for reuse.
 
 ---
 
-## 📊 Impact
+## 📊 Impact Overview
 
-| Area | Impact |
-|-------|--------|
-| **Economic** | Boosts artisans’ digital reach & revenue |
-| **Social** | Preserves cultural heritage through storytelling |
-| **Environmental** | Promotes sustainable practices |
-| **Technological** | Bridges AI with real-world artisan ecosystems |
+| Impact Area       | Description                                         |
+| ----------------- | --------------------------------------------------- |
+| **Economic**      | Expands artisans’ market reach and income potential |
+| **Social**        | Preserves cultural art through digital storytelling |
+| **Environmental** | Encourages eco-friendly and sustainable methods     |
+| **Technological** | Connects AI with real-world artisan ecosystems      |
 
 ---
 
 ## 🧠 Future Enhancements
 
-- 🌍 Multilingual Story Generator (Regional Indian Languages)  
-- 🧾 Integration with E-Commerce APIs (Etsy, Amazon Handmade)  
-- 💬 AI Chat Assistant for Business Guidance  
-- 🪶 Blockchain Provenance Verification  
-- 🎥 Direct Sora AI Video Generation
+* 🌍 Multilingual Story Generator (Regional Indian Languages)
+* 🛒 Integration with E-Commerce APIs (Etsy, Amazon Handmade)
+* 💬 Conversational AI Chat Assistant for business guidance
+* 🪶 Blockchain-based Provenance Verification
+* 🎥 Direct integration with **Sora AI** for auto-generated marketing videos
 
 ---
 
 ## 🏁 Conclusion
 
-**Artify AI** bridges tradition and technology, empowering artisans with tools for **authentic storytelling, market intelligence, sustainability scoring, and ad creativity.**  
-It’s a game-changer for **artisan digital inclusion and sustainable growth.**
+**Artify AI** bridges the gap between tradition and technology —
+empowering artisans with tools for **authentic storytelling, market intelligence, sustainability evaluation, and AI-powered marketing**.
+It’s a step toward **inclusive digital growth and sustainable craftsmanship**.
 
 ---
 
 ## 👥 Team Details
 
-| Name | Role |
-|------|------|
-| **Yash Tagunde** | Team Lead & Project Manager |
+| Name                | Role                            |
+| ------------------- | ------------------------------- |
+| **Yash Tagunde**    | Team Lead & Project Manager     |
 | **Tanmay Khedekar** | AI/ML Engineer & Lead Developer |
-| **Shrishant Madke** | Backend Developer & Researcher |
-| **Vedant Patil** | Frontend Developer |
+| **Shrishant Madke** | Backend Developer & Researcher  |
+| **Vedant Patil**    | Frontend Developer              |
 
 ---
 
-## 🌐 Project Deployment & Contact
+## 🌐 Deployment & Contact
 
-🔗 **Live Project:** [Artify AI Platform](http://artifyai-599463248805.asia-south1.run.app)  
+🔗 **Live Platform:** [Artify AI Web App](https://artifyai-599463248805.asia-south1.run.app)
+🎥 **Demo Video:** [Watch Here](https://drive.google.com/file/d/1k7V_q62mQj8T4yEJSMXYUrkUNxbqVnsc/view)
 📧 **Email:** [info.artifyai@gmail.com](mailto:info.artifyai@gmail.com)
-🔗 **Demo Video Link:** https://drive.google.com/file/d/1k7V_q62mQj8T4yEJSMXYUrkUNxbqVnsc/view
 
 ---
 
-> _Made with ❤️ by Team **Artify AI** for H2Skilles Gen AI Exchange Hackathon_
+> *Made with ❤️ by **Team Artify AI** for **H2Skilles Gen AI Exchange Hackathon 2025***
+
+---
+
