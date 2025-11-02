@@ -1,4 +1,4 @@
-# **App Name**: CraftGenie
+# **App Name**: Artify AI
 
 ## Core Features:
 
