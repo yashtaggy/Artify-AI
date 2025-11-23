@@ -5,7 +5,7 @@ import { useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
-import { Loader2, Megaphone, Upload } from 'lucide-react';
+import { Loader2, Megaphone, Upload, Copy } from 'lucide-react'; // ⬅️ Copy icon added
 import type { AdGeneratorState, AdGeneratorInput } from '@/app/actions';
 import { handleGenerateAds } from '@/app/actions';
 import { AdGeneratorSchema } from '@/lib/schemas';
@@ -48,6 +48,23 @@ export function AdGenerator() {
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(PlaceHolderImages[0]?.imageUrl || null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  // 📌 Copy text handler
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: 'Copied!',
+        description: 'Text copied successfully.',
+      });
+    } catch {
+      toast({
+        title: 'Copy Failed',
+        description: 'Try again.',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const form = useForm<AdGeneratorInput>({
     resolver: zodResolver(AdGeneratorSchema),
@@ -163,36 +180,34 @@ export function AdGenerator() {
               <CardDescription>Your ad creatives are ready!</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Card className="bg-muted p-4">
-                <CardHeader>
-                  <CardTitle>YouTube Short</CardTitle>
-                </CardHeader>
-                <CardContent>{state.result.youtubeShort}</CardContent>
-              </Card>
-              <Card className="bg-muted p-4">
-                <CardHeader>
-                  <CardTitle>Instagram Reel</CardTitle>
-                </CardHeader>
-                <CardContent>{state.result.instagramReel}</CardContent>
-              </Card>
-              <Card className="bg-muted p-4">
-                <CardHeader>
-                  <CardTitle>Google Ad Banner</CardTitle>
-                </CardHeader>
-                <CardContent>{state.result.googleAdBanner}</CardContent>
-              </Card>
-              <Card className="bg-muted p-4">
-                <CardHeader>
-                  <CardTitle>Audience Targeting</CardTitle>
-                </CardHeader>
-                <CardContent>{state.result.audienceTargeting}</CardContent>
-              </Card>
-              <Card className="bg-muted p-4">
-                <CardHeader>
-                  <CardTitle>Budget Optimization</CardTitle>
-                </CardHeader>
-                <CardContent>{state.result.budgetOptimization}</CardContent>
-              </Card>
+
+              {/* ⬇️ Repeated pattern with copy button */}
+
+              {[
+                { label: "YouTube Short", value: state.result.youtubeShort },
+                { label: "Instagram Reel", value: state.result.instagramReel },
+                { label: "Google Ad Banner", value: state.result.googleAdBanner },
+                { label: "Audience Targeting", value: state.result.audienceTargeting },
+                { label: "Budget Optimization", value: state.result.budgetOptimization },
+              ].map((item, i) => (
+                <Card key={i} className="bg-muted p-4">
+                  <CardHeader>
+                    <CardTitle>{item.label}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="whitespace-pre-wrap">{item.value}</CardContent>
+                  <CardFooter>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex gap-2"
+                      onClick={() => copyToClipboard(item.value)}
+                    >
+                      <Copy size={16} /> Copy
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+
             </CardContent>
           </Card>
         </div>

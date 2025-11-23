@@ -5,8 +5,8 @@ import { useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
-import { Loader2, Sparkles, Upload, Save } from 'lucide-react';
-import * as htmlToImage from 'html-to-image'; // 🔥 Added for download feature
+import { Loader2, Sparkles, Upload, Save, Copy, Share2 } from 'lucide-react'; // 🔥 Added Share2 icon
+import * as htmlToImage from 'html-to-image';
 import type { StoryGenerationState } from '@/app/actions';
 import { handleGenerateStory } from '@/app/actions';
 import { StoryGeneratorSchema } from '@/lib/schemas';
@@ -63,6 +63,30 @@ function SubmitButton() {
   );
 }
 
+// Helper Component for Copy Button
+interface CopyButtonProps {
+  textToCopy: string;
+  label: string;
+  toast: ReturnType<typeof useToast>['toast'];
+}
+
+const CopyButton: FC<CopyButtonProps> = ({ textToCopy, label, toast }) => {
+  const handleCopy = () => {
+    navigator.clipboard.writeText(textToCopy);
+    toast({
+      title: 'Copied!',
+      description: `${label} copied to clipboard.`,
+    });
+  };
+  return (
+    <Button variant="ghost" size="sm" onClick={handleCopy} className="self-end p-2 h-auto text-muted-foreground hover:text-primary">
+      <Copy className="h-4 w-4 mr-1" />
+      Copy
+    </Button>
+  );
+};
+
+
 export function StoryGenerator() {
   const [state, formAction] = useActionState(handleGenerateStory, initialState);
   const { toast } = useToast();
@@ -72,7 +96,7 @@ export function StoryGenerator() {
   );
   const [imageBase64, setImageBase64] = useState<string | undefined>(undefined);
   const formRef = useRef<HTMLFormElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null); // 🔥 Added ref for Provenance Card
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const textOnlySchema = StoryGeneratorSchema.omit({ productPhoto: true });
 
@@ -188,7 +212,7 @@ export function StoryGenerator() {
         variant: "destructive",
       });
     }
-  };  
+  };
   
 
   // 🔥 Download Provenance Card as Image
@@ -200,12 +224,66 @@ export function StoryGenerator() {
       link.download = `${state.form.productName || 'provenance-card'}.png`;
       link.href = dataUrl;
       link.click();
+      toast({
+        title: 'Download Successful',
+        description: 'Provenance card downloaded as PNG.',
+      });
     } catch (error) {
       console.error('Error exporting card:', error);
       toast({
         title: 'Error',
         description: 'Could not download the card.',
         variant: 'destructive',
+      });
+    }
+  };
+  
+  // 🔥 Share Provenance Card
+  const handleShareCard = async () => {
+    if (!cardRef.current) return;
+    
+    // Check for Web Share API support
+    if (navigator.canShare && navigator.canShare({ files: [] })) {
+      try {
+        const dataUrl = await htmlToImage.toPng(cardRef.current);
+        
+        // Convert Data URL to Blob
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
+        
+        // Create a File object
+        const fileName = `${state.form.productName || 'provenance-card'}.png`;
+        const file = new File([blob], fileName, { type: 'image/png' });
+
+        const shareData = {
+          files: [file],
+          title: `Provenance Card for ${state.form.productName || 'Product'}`,
+          text: `Check out the story and provenance of this item: ${state.form.productName}`,
+        };
+
+        await navigator.share(shareData);
+        
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          // User cancelled the share
+          return;
+        }
+        console.error('Error sharing card:', error);
+        toast({
+          title: 'Share Failed',
+          description: 'Could not share the card. Try downloading it instead.',
+          variant: 'destructive',
+        });
+      }
+    } else {
+      // Fallback for browsers without Web Share API
+      const mailtoLink = `mailto:?subject=${encodeURIComponent(`Provenance Card for ${state.form.productName || 'Product'}`)}&body=${encodeURIComponent(`I wanted to share the digital provenance card for this item: ${state.form.productName}.\n\nYou can download the image and share it via WhatsApp or Instagram manually.`)}`;
+
+      window.location.href = mailtoLink;
+      
+      toast({
+        title: 'Share Fallback',
+        description: 'Opening email client. Please download the image for sharing on platforms like WhatsApp or Drive.',
       });
     }
   };
@@ -340,28 +418,52 @@ export function StoryGenerator() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                  {/* Short Description */}
                   <div>
-                    <h3 className="font-semibold text-lg mb-2 text-primary">
-                      Short Description
-                    </h3>
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-semibold text-lg text-primary">
+                        Short Description
+                      </h3>
+                      <CopyButton 
+                        textToCopy={state.result.productDescriptionShort} 
+                        label="Short Description" 
+                        toast={toast} 
+                      />
+                    </div>
                     <p className="font-body text-foreground/90">
                       {state.result.productDescriptionShort}
                     </p>
                   </div>
                   <Separator />
+                  {/* Detailed Description */}
                   <div>
-                    <h3 className="font-semibold text-lg mb-2 text-primary">
-                      Detailed Description
-                    </h3>
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-semibold text-lg text-primary">
+                        Detailed Description
+                      </h3>
+                      <CopyButton 
+                        textToCopy={state.result.productDescriptionLong} 
+                        label="Detailed Description" 
+                        toast={toast} 
+                      />
+                    </div>
                     <p className="font-body text-foreground/90 whitespace-pre-wrap">
                       {state.result.productDescriptionLong}
                     </p>
                   </div>
                   <Separator />
+                  {/* Social Media Post */}
                   <div>
-                    <h3 className="font-semibold text-lg mb-2 text-primary">
-                      Social Media Post
-                    </h3>
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-semibold text-lg text-primary">
+                        Social Media Post
+                      </h3>
+                      <CopyButton 
+                        textToCopy={state.result.socialMediaPost} 
+                        label="Social Media Post" 
+                        toast={toast} 
+                      />
+                    </div>
                     <p className="font-body text-foreground/90 whitespace-pre-wrap">
                       {state.result.socialMediaPost}
                     </p>
@@ -379,7 +481,7 @@ export function StoryGenerator() {
                 </CardFooter>
               </Card>
 
-              {/* Provenance Card + Download */}
+              {/* Provenance Card + Download/Share */}
               <div className="flex flex-col items-center">
                 <h2 className="font-headline text-2xl mb-4 text-center">
                   Digital Provenance Card
@@ -390,12 +492,20 @@ export function StoryGenerator() {
                   story={state.result.provenanceCardContent}
                   imageUrl={state.result.productImageUri}
                 />
-                <Button
-                  onClick={handleDownloadCard}
-                  className="mt-4 bg-primary text-white hover:bg-primary/90"
-                >
-                  <Save className="mr-2 h-4 w-4" /> Download Card
-                </Button>
+                <div className="flex space-x-4 mt-4"> {/* 🔥 Added div for button group */}
+                  <Button
+                    onClick={handleDownloadCard}
+                    className="bg-primary text-white hover:bg-primary/90"
+                  >
+                    <Save className="mr-2 h-4 w-4" /> Download Card
+                  </Button>
+                  <Button
+                    onClick={handleShareCard}
+                    className="bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  >
+                    <Share2 className="mr-2 h-4 w-4" /> Share Card
+                  </Button>
+                </div>
               </div>
             </div>
           ) : (

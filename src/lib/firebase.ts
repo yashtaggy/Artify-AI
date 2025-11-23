@@ -17,7 +17,7 @@ const firebaseConfig = {
   storageBucket: "artifyai-891ba.appspot.com",
   messagingSenderId: "599463248805",
   appId: "1:599463248805:web:0d93b8541d013909001e4c",
-  measurementId: "G-TRJH21BNZJ",
+  measurementId: "G-TRJH21BNZJ"
 };
 
 // --- OPTIONAL: Token injection if used by your platform ---
