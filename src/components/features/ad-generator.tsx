@@ -5,7 +5,7 @@ import { useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
-import { Loader2, Megaphone, Upload, Copy } from 'lucide-react'; // ⬅️ Copy icon added
+import { Loader2, Megaphone, Upload, Copy } from 'lucide-react';
 import type { AdGeneratorState, AdGeneratorInput } from '@/app/actions';
 import { handleGenerateAds } from '@/app/actions';
 import { AdGeneratorSchema } from '@/lib/schemas';
@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
+import { Separator } from '../ui/separator';
 
 const initialState: AdGeneratorState = {
   form: {
@@ -49,7 +50,6 @@ export function AdGenerator() {
   const [imagePreview, setImagePreview] = useState<string | null>(PlaceHolderImages[0]?.imageUrl || null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  // 📌 Copy text handler
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -110,6 +110,7 @@ export function AdGenerator() {
             Generate ready-to-use ads for your product.
           </CardDescription>
         </CardHeader>
+
         <Form {...form}>
           <form ref={formRef} action={formAction} className="space-y-4">
             <CardContent className="space-y-4">
@@ -164,6 +165,7 @@ export function AdGenerator() {
                 )}
               />
             </CardContent>
+
             <CardFooter>
               <SubmitButton />
             </CardFooter>
@@ -171,47 +173,93 @@ export function AdGenerator() {
         </Form>
       </Card>
 
-      {/* Render generated ad creatives */}
-      {state.result && (
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Generated Ads</CardTitle>
-              <CardDescription>Your ad creatives are ready!</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+      {/* ---------------- RIGHT PANEL ---------------- */}
+      <div className="space-y-4">
+        {state.result ? (
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>Generated Ads</CardTitle>
+                <CardDescription>Your ad creatives are ready!</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
 
-              {/* ⬇️ Repeated pattern with copy button */}
+                {[
+                  { label: "YouTube Short", value: state.result.youtubeShort },
+                  { label: "Instagram Reel", value: state.result.instagramReel },
+                  { label: "Google Ad Banner", value: state.result.googleAdBanner },
+                  { label: "Audience Targeting", value: state.result.audienceTargeting },
+                  { label: "Budget Optimization", value: state.result.budgetOptimization },
+                ].map((item, i) => (
+                  <Card key={i} className="bg-muted p-4">
+                    <CardHeader>
+                      <CardTitle>{item.label}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="whitespace-pre-wrap">{item.value}</CardContent>
+                    <CardFooter>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex gap-2"
+                        onClick={() => copyToClipboard(item.value)}
+                      >
+                        <Copy size={16} /> Copy
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
 
-              {[
-                { label: "YouTube Short", value: state.result.youtubeShort },
-                { label: "Instagram Reel", value: state.result.instagramReel },
-                { label: "Google Ad Banner", value: state.result.googleAdBanner },
-                { label: "Audience Targeting", value: state.result.audienceTargeting },
-                { label: "Budget Optimization", value: state.result.budgetOptimization },
-              ].map((item, i) => (
-                <Card key={i} className="bg-muted p-4">
-                  <CardHeader>
-                    <CardTitle>{item.label}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="whitespace-pre-wrap">{item.value}</CardContent>
-                  <CardFooter>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex gap-2"
-                      onClick={() => copyToClipboard(item.value)}
-                    >
-                      <Copy size={16} /> Copy
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+              </CardContent>
+            </Card>
+          </>
+        ) : (
+          /* -------- EMPTY PREVIEW CARD (ADDED) -------- */
+          <Card className="flex h-full flex-col items-center justify-center border-2 border-dashed text-center px-6 py-10">
+            <div className="max-w-md text-muted-foreground space-y-8">
+              <h2 className="font-headline text-2xl mb-2">Ad Creatives Preview</h2>
+              <p className="opacity-70">
+                Your generated ads will appear in the sections below.
+              </p>
 
-            </CardContent>
+              <Separator />
+
+              <div>
+                <h3 className="font-semibold text-lg mb-1">YouTube Short</h3>
+                <p className="text-sm opacity-70 italic">A punchy short-video script will appear here.</p>
+              </div>
+
+              <Separator />
+
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Instagram Reel</h3>
+                <p className="text-sm opacity-70 italic">Your reel caption & concept will appear here.</p>
+              </div>
+
+              <Separator />
+
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Google Ad Banner</h3>
+                <p className="text-sm opacity-70 italic">A banner headline & copy will appear here.</p>
+              </div>
+
+              <Separator />
+
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Audience Targeting</h3>
+                <p className="text-sm opacity-70 italic">Your ideal audience profile will appear here.</p>
+              </div>
+
+              <Separator />
+
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Budget Optimization</h3>
+                <p className="text-sm opacity-70 italic">A recommended ad-spend strategy will appear here.</p>
+              </div>
+            </div>
           </Card>
-        </div>
-      )}
+        )}
+      </div>
+      {/* ---------------- END RIGHT PANEL ---------------- */}
     </div>
   );
 }
