@@ -349,11 +349,9 @@ export function StoryGenerator() {
                   <FormItem>
                     <FormLabel>Product Name</FormLabel>
                     <FormControl>
-                      <input
+                      <Textarea
                         {...field}
-                        className="w-full"
                         placeholder="e.g., Terracotta Water Jug"
-                        name="productName"
                       />
                     </FormControl>
                     <FormMessage />
@@ -509,18 +507,71 @@ export function StoryGenerator() {
               </div>
             </div>
           ) : (
-            <Card className="flex h-full flex-col items-center justify-center border-2 border-dashed">
-              <div className="text-center text-muted-foreground">
-                <Sparkles className="mx-auto h-12 w-12" />
-                <h3 className="mt-4 font-headline text-xl">
-                  Your AI-Generated Story
-                </h3>
-                <p className="mt-2 max-w-xs">
-                  The generated product descriptions, social media posts, and
-                  provenance card will appear here.
-                </p>
-              </div>
-            </Card>
+            <Card className="flex h-full flex-col items-center justify-center border-2 border-dashed text-center px-6 py-10">
+  <div className="max-w-md text-muted-foreground space-y-8">
+
+    {/* Title */}
+    <div>
+      <h2 className="font-headline text-2xl mb-2">
+        Story Output Preview
+      </h2>
+      <p className="opacity-70">
+        Your generated content will appear in the sections below.
+      </p>
+    </div>
+
+    <Separator />
+
+    {/* Short Description */}
+    <div>
+      <h3 className="font-semibold text-lg mb-1">
+        Short Description
+      </h3>
+      <p className="text-sm opacity-70 italic">
+        A concise product summary will appear here.
+      </p>
+    </div>
+
+    <Separator />
+
+    {/* Detailed Description */}
+    <div>
+      <h3 className="font-semibold text-lg mb-1">
+        Detailed Description
+      </h3>
+      <p className="text-sm opacity-70 italic">
+        A long, story-driven description will appear here.
+      </p>
+    </div>
+
+    <Separator />
+
+    {/* Social Media Post */}
+    <div>
+      <h3 className="font-semibold text-lg mb-1">
+        Social Media Post
+      </h3>
+      <p className="text-sm opacity-70 italic">
+        A ready-to-share social caption will appear here.
+      </p>
+    </div>
+
+    <Separator />
+
+    {/* Provenance Card */}
+    <div>
+      <h3 className="font-semibold text-lg mb-1">
+        Digital Provenance Card
+      </h3>
+      <p className="text-sm opacity-70 italic">
+        A preview of your provenance card will appear here.
+      </p>
+    </div>
+
+  </div>
+</Card>
+
+
           )}
         </AnimateOnResult>
       </div>
@@ -533,10 +584,17 @@ const AnimateOnResult: FC<{ result: any; children: React.ReactNode }> = ({
   children,
 }) => {
   const [show, setShow] = useState(false);
+
   useEffect(() => {
     if (result) setShow(true);
   }, [result]);
 
+  // Before any result, just render children normally (no fade-out)
+  if (!result) {
+    return <>{children}</>;
+  }
+
+  // After result exists, apply fade-in
   return (
     <div
       className={`transition-opacity duration-1000 ${
