@@ -4,7 +4,7 @@ import { useActionState, useEffect, useRef } from 'react';
 import { useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Loader2, TrendingUp, Tag } from 'lucide-react';
+import { Loader2, TrendingUp, Tag, Copy } from 'lucide-react';  // <-- Added Copy icon
 import type { TrendFinderState } from '@/app/actions';
 import { handleSuggestTrends } from '@/app/actions';
 import { TrendFinderSchema, type TrendFinderInput } from '@/lib/schemas';
@@ -54,6 +54,15 @@ export function TrendFinder() {
     },
   });
 
+  const copySEO = () => {
+    if (!state?.result?.seoKeywords) return;
+    navigator.clipboard.writeText(state.result.seoKeywords.join(', '));
+    toast({
+      title: "Copied!",
+      description: "SEO keywords copied to clipboard.",
+    });
+  };
+
   useEffect(() => {
     if (state.error) {
       toast({
@@ -93,6 +102,7 @@ export function TrendFinder() {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="artisanRegion"
@@ -107,6 +117,7 @@ export function TrendFinder() {
                 )}
               />
             </CardContent>
+
             <CardFooter>
               <SubmitButton />
             </CardFooter>
@@ -120,30 +131,56 @@ export function TrendFinder() {
             <CardHeader>
               <CardTitle className="font-headline text-2xl">Trend Analysis Report</CardTitle>
             </CardHeader>
+
             <CardContent className="space-y-6">
-                <div>
-                  <h3 className="font-semibold text-lg mb-2 text-primary">Market Insights</h3>
-                  <p className="font-body text-foreground/90 whitespace-pre-wrap">{state.result.marketTrends}</p>
+
+              <div>
+                <h3 className="font-semibold text-lg mb-2 text-primary">Market Insights</h3>
+                <p className="font-body text-foreground/90 whitespace-pre-wrap">{state.result.marketTrends}</p>
+              </div>
+
+              <Separator />
+
+              <div>
+                <h3 className="font-semibold text-lg mb-2 text-primary">Suggested Variations</h3>
+                <ul className="list-disc list-inside space-y-2 font-body text-foreground/90">
+                  {state.result.suggestedVariations.map((variation, i) => (
+                    <li key={i}>{variation}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <Separator />
+
+              {/* ---------------- SEO KEYWORDS WITH COPY BUTTON ---------------- */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="font-semibold text-lg text-primary">SEO Keywords</h3>
+
+                  {/* Copy button added here */}
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={copySEO}
+                    className="flex items-center gap-1 text-muted-foreground hover:text-primary"
+                  >
+                    <Copy size={16} /> Copy
+                  </Button>
                 </div>
-                <Separator />
-                <div>
-                  <h3 className="font-semibold text-lg mb-2 text-primary">Suggested Variations</h3>
-                  <ul className="list-disc list-inside space-y-2 font-body text-foreground/90">
-                    {state.result.suggestedVariations.map((variation, i) => <li key={i}>{variation}</li>)}
-                  </ul>
+
+                <div className="flex flex-wrap gap-2">
+                  {state.result.seoKeywords.map((keyword, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-secondary-foreground"
+                    >
+                      <Tag size={14} />
+                      <span>{keyword}</span>
+                    </div>
+                  ))}
                 </div>
-                <Separator />
-                <div>
-                  <h3 className="font-semibold text-lg mb-2 text-primary">SEO Keywords</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {state.result.seoKeywords.map((keyword, i) => (
-                      <div key={i} className="flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-secondary-foreground">
-                        <Tag size={14} />
-                        <span>{keyword}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              </div>
+
             </CardContent>
           </Card>
         ) : (
