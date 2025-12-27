@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-
+ 
   try {
     const body = await req.json();
     const { productName } = body;

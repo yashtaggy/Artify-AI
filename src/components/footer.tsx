@@ -4,7 +4,7 @@ export function Footer() {
   return (
     <footer className="w-full border-t bg-card text-foreground mt-10">
       {/* Upper Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-center text-center md:text-left">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-start text-center md:text-left">
         
         {/* Left: Brand Section */}
         <div className="flex flex-col items-center md:items-start gap-2">
@@ -21,32 +21,15 @@ export function Footer() {
           </p>
         </div>
 
-        {/* Middle: Contact Info */}
-        <div className="flex flex-col items-center gap-1 text-sm">
+        {/* Right: Contact Info */}
+        <div className="flex flex-col items-center md:items-end gap-1 text-sm">
           <h3 className="font-medium text-foreground mb-1">Contact Us</h3>
           <a
-            href="mailto:yashtaggy1603@gmail.com"
+            href="mailto:info.artifyai@gmail.com"
             className="hover:text-primary transition-colors"
           >
             info.artifyai@gmail.com
           </a>
-        </div>
-
-        {/* Right: Hackathon + Image Space */}
-        <div className="flex flex-col items-center md:items-end gap-2">
-          <p className="text-sm font-medium text-muted-foreground text-center md:text-right">
-            Built for <br />
-            <span className="text-foreground font-semibold">
-              Google Cloud Gen AI Exchange Hackathon
-            </span>
-          </p>
-          {/* Placeholder for a wide banner image */}
-          <div className="w-40 h-12 rounded-md bg-muted/40 flex items-center justify-center text-xs text-muted-foreground border border-border">
-          <img
-              src="/logo1.png"
-              alt="ArtifyAI Logo"
-            />
-          </div>
         </div>
       </div>
 

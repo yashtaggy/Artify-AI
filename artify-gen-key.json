@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "artifyai-891ba",
+  "private_key_id": "526a1ad9ca157428507c13e31b8c785049e1fe83",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCbFw+2g4ia2lAZ\nJw08uISs7jPgVuJGa8Ynv0DY0RQUrec6Ynkl7U0G4+De3CqMznhOZQLJ0tHzTpWc\nzWxLJy0f0eyIGnzjvOtAHQhLExkke7J82NMBMZAGszBYULkMJwBX8j51FmFFQwuz\nsTOtpC9SLo/xRDJKvuhtXwLAZWg3NSwiuo9hg0m0UvR/d7eclpF7tGDCV9/FR6PT\nfLM+AaHrVTKi2os2JX4waxnBjY9eXP7mD4QXCh1Yb/X3EuiZ4cdoLsHnoLT4SVnW\nDbT+m6LAkvs2vZH30C9ruerWNsSKzfgtUTqJ+LL+ac4Dlhm2Wvuxib1fIwAux1m7\nNbcOC45HAgMBAAECggEAEh3KBJht0yTwWVfR+IdXXDoBDlIn4XECdy8knI8jyNyd\nl5jcLP2A0264HGBcihEuRX4QKtI5GzJRUL1ASrEbWM21UxrA/vtZAabCir6C39uh\nOGs9jrSi7d1tpstbKlu98wgFmrjQCP6xdb6b2ktFCdUNlHHSbB/L18bS8/WEjHo3\nZFy0ejOBbrOFDmCWqzLZHahncYkjlVT32jgYzkHhKoRtlY6iRDqrpVEWdyxH7rDC\nU6yZttU65cMfgzhs0oGjaLD7Waa0JZH3/PngD5Ks41Kvpp1sKaxNaJgKLP/E7rqn\njP7tvYVB3ZlbzN86uCa932QMca8iPT9nKnBC9NpdUQKBgQDYmZw0r3oxv+M9cfRd\nNrgLrks0sGZE+C/7ehz0DZ4ysixkJHLVyalDKsYPxtmNtx6NhzQq2Pn5hFqWUyTH\n6Wc8A6mF4jajbnI53Y2l70MlzxQ4vdA7Ra9OLxQXn7zbqehYGFPhTwLHKdQr0WYB\nZTsZWOvIF4w6hbQLPEKUzuPJEQKBgQC3TR+7DlSdBb5BzIA5lWucvfX8EagiDNxc\nwHAU2bjxcS9bgsMBfNbsjjS0XTnUcX/Z1uAeFttDesxIAOU/eSMEopa44bce/SeD\nQYVkKp/zXwaCoBU5KkNJcH+LP6P/CFYoh2fDdEbiHvKVXTUboaY+zajhvi5s1L5J\nzYlEJqqh1wKBgQChW13Iyein4yEwBxJZ1oeo/AC+kaK+Qn3MQ54KGZL+hUkYmSaL\nKR3VEapW2nX7Yq16FXzBZr5iKT0qu2mtG61yQfAp8ultOrwRa4E4WlOVePzBgHX9\nkd4UynGXX8Jbiemypvzl3exd3kVXFzl8VKOAMIQFnbUza6NCs3OOU8nRYQKBgC7B\niH+BZ0nqZh6ImIiXuaxwtCdJJbcRysAKAkz/QHKt6WORVkax3mzW1VDQmui6zt71\nNZPXRrTOxP7044UuVCVhh8q/IKPR9VtAwlLLoKNGsPVu+hrr0eAQxyfw4tcx/DA4\nYdp0dYRGWqCI9vwGXs6UTSjQBy2RkrxmpkXxCwNfAoGBAMAyedp6fuiES+FUiZ16\n67clogRknFXhMuGbR2TRj0dVQUP04037Xguaak4ZVFcWcAZTgWOB9EDVCMrT5R9T\nXRWEhvB/aDlb9uhwqaqKdDW0wUyV/XcGU9vb+2zD+5NwOf7d2v7WPBtyFR9HYjhq\nDhyFWknjESpJUE7XUw7tQ2b6\n-----END PRIVATE KEY-----\n",
+  "client_email": "artify-gen@artifyai-891ba.iam.gserviceaccount.com",
+  "client_id": "104285273534928095888",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/artify-gen%40artifyai-891ba.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
